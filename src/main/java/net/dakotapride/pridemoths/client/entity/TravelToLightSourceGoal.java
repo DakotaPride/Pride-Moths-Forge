@@ -4,6 +4,7 @@ import net.dakotapride.pridemoths.PrideMothsMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
+import org.jetbrains.annotations.NotNull;
 
 public class TravelToLightSourceGoal extends MoveToBlockGoal {
     private final MothEntity moth;
@@ -14,13 +15,13 @@ public class TravelToLightSourceGoal extends MoveToBlockGoal {
     }
 
     @Override
-    public BlockPos getMoveToTarget() {
+    public @NotNull BlockPos getMoveToTarget() {
         return this.blockPos;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return this.isValidTarget(this.moth.getLevel(), this.blockPos);
+        return this.isValidTarget(this.moth.level(), this.blockPos);
     }
 
     @Override

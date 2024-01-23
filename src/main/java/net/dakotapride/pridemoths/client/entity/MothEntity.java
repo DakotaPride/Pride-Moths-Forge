@@ -40,21 +40,21 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.List;
 
-public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPrideMoths {
+public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrideMoths {
     private static final EntityDataAccessor<String> VARIANT = SynchedEntityData.defineId(MothEntity.class, EntityDataSerializers.STRING);
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     public boolean fromJar = false;
     public static final List<MothVariation> PRIDE_VARIATIONS = List.of(
             MothVariation.TRANSGENDER, MothVariation.LGBT, MothVariation.NON_BINARY, MothVariation.AGENDER, MothVariation.ASEXUAL,
@@ -137,7 +137,7 @@ public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPr
     @Override
     protected void ageBoundaryReached() {
         super.ageBoundaryReached();
-        if (!this.isBaby() && this.getLevel().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+        if (!this.isBaby() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
             this.spawnAtLocation(PrideMothsMod.MOTH_FUZZ.get(), 1);
         }
 
@@ -164,7 +164,7 @@ public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPr
         if (isFood(getUseItem()) && !this.isBaby()) {
             return super.mobInteract(player, hand);
         } else if (dislikesFoodItem(getUseItem())) {
-            this.hurt(DamageSource.GENERIC, 1.0F);
+            this.hurt(player.damageSources().generic(), 1.0F);
         } else if (isAllergicToFoodItem(getUseItem()) || (getUseItem().getItem().getFoodProperties(getUseItem(), player) != null && getUseItem().getItem().getFoodProperties(getUseItem(), player).isMeat())) {
             this.kill();
         }
@@ -216,7 +216,7 @@ public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPr
                 }
             }
 
-            this.getLevel().playSound(player, player.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0f, 1.0f);
+            this.level().playSound(player, player.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0f, 1.0f);
             this.discard();
             return InteractionResult.SUCCESS;
         }
@@ -352,7 +352,7 @@ public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPr
 
     @Override
     public boolean isFlying() {
-        return !this.isOnGround();
+        return !this.onGround();
     }
 
     @Override
@@ -360,18 +360,18 @@ public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPr
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::predicate));
+    public void registerControllers(AnimatableManager.ControllerRegistrar controller) {
+        controller.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
         // if (event.isMoving()) {
         //            event.getController().setAnimation(RawAnimation.begin().then("animation.moth.flight", Animation.LoopType.LOOP));
         //        } else {
         //            event.getController().setAnimation(RawAnimation.begin().then("animation.moth.idle", Animation.LoopType.LOOP));
         //        }
 
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.moth.idle", true));
+        event.getController().setAnimation(RawAnimation.begin().then("animation.moth.idle", Animation.LoopType.LOOP));
 
         return PlayState.CONTINUE;
     }
@@ -393,8 +393,8 @@ public class MothEntity extends Animal implements IAnimatable, FlyingAnimal, IPr
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return this.factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     @Override
