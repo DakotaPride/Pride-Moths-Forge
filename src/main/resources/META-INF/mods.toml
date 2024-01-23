@@ -27,7 +27,7 @@ displayName="Happy Pride Moth!" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="assets/pridemoths/icon.png" #optional
+logoFile="icon.png" #optional
 # A text field displayed in the mod UI
 # credits="Thanks for this example mod goes to Java" #optional
 # A text field displayed in the mod UI
@@ -60,5 +60,12 @@ description='''Love moths AND pride? Why not both!'''
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="[1.19.2,1.20)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.pridemoths]]
+    modId="geckolib3"
+    mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="[3.1.40,)"
     ordering="NONE"
     side="BOTH"
