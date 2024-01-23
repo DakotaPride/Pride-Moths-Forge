@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "item": "pridemoths:moth_jar"
+    },
+    "title": {
+      "translate": "advancements.pridemoths.moth_jar.title"
+    },
+    "description": {
+      "translate": "advancements.pridemoths.moth_jar.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "moth_jar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "pridemoths:moth_jars"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "moth_jar"
+    ]
+  ]
+}

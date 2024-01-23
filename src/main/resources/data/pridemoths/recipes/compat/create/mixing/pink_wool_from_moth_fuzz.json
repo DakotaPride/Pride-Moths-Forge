@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "pridemoths:moth_fuzz"
+    },
+    {
+      "item": "pridemoths:moth_fuzz"
+    },
+    {
+      "item": "pridemoths:moth_fuzz"
+    },
+    {
+      "item": "pridemoths:moth_fuzz"
+    },
+    {
+      "item": "minecraft:pink_dye"
+    },
+    {
+      "amount": 1000,
+      "fluid": "minecraft:water",
+      "nbt": {}
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:pink_wool"
+    }
+  ]
+}
