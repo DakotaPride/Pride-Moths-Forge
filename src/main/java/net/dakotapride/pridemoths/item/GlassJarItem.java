@@ -24,8 +24,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class GlassJarItem extends Item {
+    public GlassJarItem(boolean i, Properties settings) {
+        super(settings.stacksTo(16));
+    }
+
     public GlassJarItem(Properties settings) {
-        super(settings);
+        super(settings.stacksTo(1));
     }
 
     public static MothVariation getMothVariant(Item item) {
@@ -100,7 +104,7 @@ public class GlassJarItem extends Item {
                 moth.setCustomName(context.getItemInHand().getHoverName());
             }
 
-            context.getLevel().playSound(context.getPlayer(), context.getPlayer().blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0f, 1.4f);
+            context.getLevel().playSound(context.getPlayer(), context.getClickedPos(), SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0f, 1.4f);
             context.getLevel().addFreshEntity(moth);
 
             if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
@@ -114,11 +118,11 @@ public class GlassJarItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
         tooltip.add(Component.translatable("text.pridemoths.jar.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
 
-        if (!itemStack.is(PrideMothsMod.GLASS_JAR.get())) {
-            tooltip.add(Component.translatable("text.pridemoths.jar." + getMothVariant(itemStack.getItem()).getVariation()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+        if (!stack.is(PrideMothsMod.GLASS_JAR.get())) {
+            tooltip.add(Component.translatable("text.pridemoths.jar." + getMothVariant(stack.getItem()).getVariation()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
         }
     }
 }

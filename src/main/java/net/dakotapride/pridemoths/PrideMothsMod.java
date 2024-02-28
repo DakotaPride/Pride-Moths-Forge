@@ -60,7 +60,7 @@ public class PrideMothsMod {
     public static RegistryObject<Item> FRUITFUL_STEW = ITEMS.register("fruitful_stew",
             () -> new FruitfulStewFoodItem(new Item.Properties().tab(CreativeModeTab.TAB_FOOD).stacksTo(1)));
     public static RegistryObject<Item> GLASS_JAR = ITEMS.register("glass_jar",
-            () -> new GlassJarItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
+            () -> new GlassJarItem(true, new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
     public static RegistryObject<Item> MOTH_JAR = ITEMS.register("moth_jar",
             () -> new GlassJarItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
     public static RegistryObject<Item> RARE_MOTH_JAR = ITEMS.register(MothVariation.RARE.getVariation() + "_moth_jar",
