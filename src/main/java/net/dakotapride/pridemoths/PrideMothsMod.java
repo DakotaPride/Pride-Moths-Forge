@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -129,6 +131,39 @@ public class PrideMothsMod {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) { }
+
+    @SubscribeEvent
+    public static void itemGroupEvent(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(MOTH_SPAWN_EGG);
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(GLASS_JAR);
+            event.accept(MOTH_JAR);
+            event.accept(RARE_MOTH_JAR);
+            event.accept(TRANSGENDER_MOTH_JAR);
+            event.accept(LGBT_MOTH_JAR);
+            event.accept(NON_BINARY_MOTH_JAR);
+            event.accept(LESBIAN_MOTH_JAR);
+            event.accept(GAY_MOTH_JAR);
+            event.accept(AGENDER_MOTH_JAR);
+            event.accept(ASEXUAL_MOTH_JAR);
+            event.accept(PANSEXUAL_MOTH_JAR);
+            event.accept(BISEXUAL_MOTH_JAR);
+            event.accept(POLYAMOROUS_MOTH_JAR);
+            event.accept(POLYSEXUAL_MOTH_JAR);
+            event.accept(OMNISEXUAL_MOTH_JAR);
+            event.accept(AROMANTIC_MOTH_JAR);
+            event.accept(DEMISEXUAL_MOTH_JAR);
+            event.accept(DEMIBOY_MOTH_JAR);
+            event.accept(DEMIGIRL_MOTH_JAR);
+            event.accept(DEMIGENDER_MOTH_JAR);
+            event.accept(AROACE_MOTH_JAR);
+            event.accept(DEMIROMANTIC_MOTH_JAR);
+            event.accept(ALLY_MOTH_JAR);
+        }
+    }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
