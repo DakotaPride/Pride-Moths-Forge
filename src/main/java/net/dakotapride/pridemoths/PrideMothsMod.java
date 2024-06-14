@@ -4,16 +4,15 @@ import net.dakotapride.pridemoths.block.FuzzyCarpetBlock;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.dakotapride.pridemoths.client.renderer.MothRenderer;
+import net.dakotapride.pridemoths.config.PrideMothsCommonConfig;
 import net.dakotapride.pridemoths.item.FruitfulStewFoodItem;
 import net.dakotapride.pridemoths.item.GlassJarItem;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +27,9 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -47,8 +48,6 @@ public class PrideMothsMod {
 
     public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), new ResourceLocation("pridemoths", "light_sources"));
     public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), new ResourceLocation("pridemoths", "can_moth_eat"));
-    public static TagKey<Item> DAMAGES_MOTH_UPON_CONSUMPTION = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), new ResourceLocation("pridemoths", "damages_moth_upon_consumption"));
-    public static TagKey<Item> KILLS_MOTH_UPON_CONSUMPTION = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), new ResourceLocation("pridemoths", "kills_moth_upon_consumption"));
 
     public static RegistryObject<EntityType<MothEntity>> MOTH =
             ENTITY_TYPES.register("moth",
@@ -122,6 +121,8 @@ public class PrideMothsMod {
         ENTITY_TYPES.register(bus);
 
         GeckoLib.initialize();
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PrideMothsCommonConfig.SPEC, "pridemoths-common.toml");
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

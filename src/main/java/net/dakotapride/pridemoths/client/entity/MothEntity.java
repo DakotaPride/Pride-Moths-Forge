@@ -3,6 +3,7 @@ package net.dakotapride.pridemoths.client.entity;
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.pride.IPrideMoths;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
+import net.dakotapride.pridemoths.config.PrideMothsCommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,6 +18,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -94,9 +97,9 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     public static MothVariation getOtherVariation(RandomSource random) {
-        int rarePatternChance = 240;
+        int rarePatternChance = PrideMothsCommonConfig.BASE_RARE_CHANCE.get();
         if (IPrideMoths.isWorldMothWeek()) {
-            rarePatternChance = 120;
+            rarePatternChance = PrideMothsCommonConfig.BASE_RARE_CHANCE_MOTH_WEEK.get();
         }
 
         if (random.nextInt(rarePatternChance) == 1) {
@@ -121,14 +124,6 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         return stack.getItem().getDefaultInstance().is(PrideMothsMod.CAN_MOTH_EAT);
     }
 
-    public boolean dislikesFoodItem(ItemStack stack) {
-        return stack.getItem().getDefaultInstance().is(PrideMothsMod.DAMAGES_MOTH_UPON_CONSUMPTION);
-    }
-
-    public boolean isAllergicToFoodItem(ItemStack stack) {
-        return stack.getItem().getDefaultInstance().is(PrideMothsMod.KILLS_MOTH_UPON_CONSUMPTION);
-    }
-
     @Override
     public @NotNull EntityDimensions getDimensions(Pose pose) {
         return EntityDimensions.fixed(0.3F, 0.3F);
@@ -150,7 +145,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         date = LocalDate.now();
         int getLocalMonthFromUser = date.get(ChronoField.MONTH_OF_YEAR);
 
-        if (getLocalMonthFromUser == 6) {
+        if (getLocalMonthFromUser == 6 || PrideMothsCommonConfig.GENERATE_PRIDE_VARIANTS_OUTSIDE_OF_PRIDE_MONTH.get()) {
             setMothVariant(getPrideVariation(random));
         } else {
             setMothVariant(getOtherVariation(random));
@@ -161,12 +156,27 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
 
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
-        if (isFood(getUseItem()) && !this.isBaby()) {
-            return super.mobInteract(player, hand);
-        } else if (dislikesFoodItem(getUseItem())) {
-            this.hurt(player.damageSources().generic(), 1.0F);
-        } else if (isAllergicToFoodItem(getUseItem()) || (getUseItem().getItem().getFoodProperties(getUseItem(), player) != null && getUseItem().getItem().getFoodProperties(getUseItem(), player).isMeat())) {
-            this.kill();
+        ItemStack itemstack = player.getItemInHand(hand);
+        if (isFood(itemstack)) {
+            if (isFavouredFoodItem(itemstack)) {
+                int i = this.getAge();
+                if (!this.level().isClientSide && i == 0 && this.canFallInLove()) {
+                    this.usePlayerItem(player, hand, itemstack);
+                    this.setInLove(player);
+                    return InteractionResult.SUCCESS;
+                }
+
+                if (this.isBaby()) {
+                    this.usePlayerItem(player, hand, itemstack);
+                    this.ageUp(getSpeedUpSecondsWhenFeeding(-i), true);
+                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                }
+
+                if (this.level().isClientSide) {
+                    return InteractionResult.CONSUME;
+                }
+
+            }
         }
 
         if (player.getItemInHand(hand).getItem() == PrideMothsMod.GLASS_JAR.get() && !this.isBaby()) {
@@ -221,7 +231,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
             return InteractionResult.SUCCESS;
         }
 
-        return super.mobInteract(player, hand);
+        return InteractionResult.PASS;
     }
 
     public void setMothVariant(MothVariation type) {
