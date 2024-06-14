@@ -7,6 +7,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -24,7 +25,7 @@ public class FuzzyCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, @NotNull TooltipFlag options) {
+    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext context, List<Component> tooltip, @NotNull TooltipFlag options) {
         tooltip.add(Component.translatable("text.pridemoths.fuzzy_carpet.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
     }
 

@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 
 public class FruitfulStewFoodItem extends Item {
     public FruitfulStewFoodItem(Properties settings) {
-        super(settings.food(new FoodProperties.Builder().nutrition(8).saturationMod(0.3F).build()));
+        super(settings.food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.3F).build()));
     }
 
     @Override

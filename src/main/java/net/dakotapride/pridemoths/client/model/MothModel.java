@@ -10,35 +10,35 @@ public class MothModel extends GeoModel<MothEntity> {
     @Override
     public ResourceLocation getModelResource(MothEntity entity) {
         if (entity.isBaby()) {
-            return new ResourceLocation("pridemoths", "geo/baby_moth.geo.json");
+            return ResourceLocation.fromNamespaceAndPath("pridemoths", "geo/baby_moth.geo.json");
         }
 
-        return new ResourceLocation("pridemoths", "geo/moth.geo.json");
+        return ResourceLocation.fromNamespaceAndPath("pridemoths", "geo/moth.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureResource(MothEntity entity) {
         if (entity.isBaby()) {
             if (entity.getMothVariant() == MothVariation.RARE) {
-                return new ResourceLocation("pridemoths", "textures/model/baby/rare.png");
+                return ResourceLocation.fromNamespaceAndPath("pridemoths", "textures/model/baby/rare.png");
             } else {
-                return new ResourceLocation("pridemoths", "textures/model/baby/moth.png");
+                return ResourceLocation.fromNamespaceAndPath("pridemoths", "textures/model/baby/moth.png");
             }
         }
 
         if (entity.getMothVariant() == MothVariation.RARE && !entity.isBaby()) {
-            return new ResourceLocation("pridemoths", "textures/model/rare.png");
+            return ResourceLocation.fromNamespaceAndPath("pridemoths", "textures/model/rare.png");
         } else {
-            return new ResourceLocation("pridemoths", "textures/model/moth.png");
+            return ResourceLocation.fromNamespaceAndPath("pridemoths", "textures/model/moth.png");
         }
     }
 
     @Override
     public ResourceLocation getAnimationResource(MothEntity entity) {
         if (entity.isBaby()) {
-            return new ResourceLocation("pridemoths", "animations/baby_moth.animation.json");
+            return ResourceLocation.fromNamespaceAndPath("pridemoths", "animations/baby_moth.animation.json");
         }
 
-        return new ResourceLocation("pridemoths", "animations/moth.animation.json");
+        return ResourceLocation.fromNamespaceAndPath("pridemoths", "animations/moth.animation.json");
     }
 }
