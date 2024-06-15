@@ -279,31 +279,59 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         if (this.hasCustomName() && !this.isBaby()) {
             if (this.getMothVariant() != MothVariation.NON_BINARY && this.getName().getString().equalsIgnoreCase("non-binary")) {
                 this.setMothVariant(MothVariation.NON_BINARY);
+            } else if (this.getMothVariant() != MothVariation.NON_BINARY && this.getName().getString().equalsIgnoreCase("non binary")) {
+                this.setMothVariant(MothVariation.NON_BINARY);
             } else if (this.getMothVariant() != MothVariation.TRANSGENDER && this.getName().getString().equalsIgnoreCase("trans")) {
+                this.setMothVariant(MothVariation.TRANSGENDER);
+            } else if (this.getMothVariant() != MothVariation.TRANSGENDER && this.getName().getString().equalsIgnoreCase("transgender")) {
                 this.setMothVariant(MothVariation.TRANSGENDER);
             } else if (this.getMothVariant() != MothVariation.LGBT && this.getName().getString().equalsIgnoreCase("lgbt")) {
                 this.setMothVariant(MothVariation.LGBT);
+            } else if (this.getMothVariant() != MothVariation.LGBT && this.getName().getString().equalsIgnoreCase("lgbtq")) {
+                this.setMothVariant(MothVariation.LGBT);
+            } else if (this.getMothVariant() != MothVariation.LGBT && this.getName().getString().equalsIgnoreCase("lgbtqia")) {
+                this.setMothVariant(MothVariation.LGBT);
             } else if (this.getMothVariant() != MothVariation.GAY && this.getName().getString().equalsIgnoreCase("gay")) {
                 this.setMothVariant(MothVariation.GAY);
+            } else if (this.getMothVariant() != MothVariation.GAY && this.getName().getString().equalsIgnoreCase("mlm")) {
+                this.setMothVariant(MothVariation.GAY);
             } else if (this.getMothVariant() != MothVariation.LESBIAN && this.getName().getString().equalsIgnoreCase("lesbian")) {
+                this.setMothVariant(MothVariation.LESBIAN);
+            } else if (this.getMothVariant() != MothVariation.LESBIAN && this.getName().getString().equalsIgnoreCase("wlw")) {
                 this.setMothVariant(MothVariation.LESBIAN);
             } else if (this.getMothVariant() != MothVariation.AGENDER && this.getName().getString().equalsIgnoreCase("agender")) {
                 this.setMothVariant(MothVariation.AGENDER);
             } else if (this.getMothVariant() != MothVariation.ASEXUAL && this.getName().getString().equalsIgnoreCase("asexual")) {
                 this.setMothVariant(MothVariation.ASEXUAL);
+            } else if (this.getMothVariant() != MothVariation.ASEXUAL && this.getName().getString().equalsIgnoreCase("ace")) {
+                this.setMothVariant(MothVariation.ASEXUAL);
             } else if (this.getMothVariant() != MothVariation.BISEXUAL && this.getName().getString().equalsIgnoreCase("bisexual")) {
+                this.setMothVariant(MothVariation.BISEXUAL);
+            } else if (this.getMothVariant() != MothVariation.BISEXUAL && this.getName().getString().equalsIgnoreCase("bi")) {
                 this.setMothVariant(MothVariation.BISEXUAL);
             } else if (this.getMothVariant() != MothVariation.PANSEXUAL && this.getName().getString().equalsIgnoreCase("pansexual")) {
                 this.setMothVariant(MothVariation.PANSEXUAL);
+            } else if (this.getMothVariant() != MothVariation.PANSEXUAL && this.getName().getString().equalsIgnoreCase("pan")) {
+                this.setMothVariant(MothVariation.PANSEXUAL);
             } else if (this.getMothVariant() != MothVariation.POLYAMOROUS && this.getName().getString().equalsIgnoreCase("polyamorous")) {
+                this.setMothVariant(MothVariation.POLYAMOROUS);
+            } else if (this.getMothVariant() != MothVariation.POLYAMOROUS && this.getName().getString().equalsIgnoreCase("polygamous")) {
                 this.setMothVariant(MothVariation.POLYAMOROUS);
             } else if (this.getMothVariant() != MothVariation.POLYSEXUAL && this.getName().getString().equalsIgnoreCase("polysexual")) {
                 this.setMothVariant(MothVariation.POLYSEXUAL);
+            } else if (this.getMothVariant() != MothVariation.POLYSEXUAL && this.getName().getString().equalsIgnoreCase("poly")) {
+                this.setMothVariant(MothVariation.POLYSEXUAL);
             } else if (this.getMothVariant() != MothVariation.OMNISEXUAL && this.getName().getString().equalsIgnoreCase("omnisexual")) {
+                this.setMothVariant(MothVariation.OMNISEXUAL);
+            } else if (this.getMothVariant() != MothVariation.OMNISEXUAL && this.getName().getString().equalsIgnoreCase("omni")) {
                 this.setMothVariant(MothVariation.OMNISEXUAL);
             } else if (this.getMothVariant() != MothVariation.DEMISEXUAL && this.getName().getString().equalsIgnoreCase("demisexual")) {
                 this.setMothVariant(MothVariation.DEMISEXUAL);
+            } else if (this.getMothVariant() != MothVariation.DEMISEXUAL && this.getName().getString().equalsIgnoreCase("demi")) {
+                this.setMothVariant(MothVariation.DEMISEXUAL);
             } else if (this.getMothVariant() != MothVariation.DEMIROMANTIC && this.getName().getString().equalsIgnoreCase("demiromantic")) {
+                this.setMothVariant(MothVariation.DEMIROMANTIC);
+            } else if (this.getMothVariant() != MothVariation.DEMIROMANTIC && this.getName().getString().equalsIgnoreCase("demiro")) {
                 this.setMothVariant(MothVariation.DEMIROMANTIC);
             } else if (this.getMothVariant() != MothVariation.DEMIBOY && this.getName().getString().equalsIgnoreCase("demiboy")) {
                 this.setMothVariant(MothVariation.DEMIBOY);
