@@ -1,7 +1,7 @@
 {
-  "conditions": [
+  "neoforge:conditions": [
     {
-      "type": "forge:mod_loaded",
+      "type": "neoforge:mod_loaded",
       "modid": "farmersdelight"
     }
   ],
@@ -14,12 +14,12 @@
   "result": [
     {
       "count": 2,
-      "item": "pridemoths:moth_fuzz"
+      "id": "pridemoths:moth_fuzz"
     },
     {
       "chance": 0.10,
       "count": 1,
-      "item": "minecraft:string"
+      "id": "minecraft:string"
     }
   ],
   "tool": {
