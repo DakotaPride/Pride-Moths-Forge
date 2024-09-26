@@ -63,6 +63,9 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
             MothVariation.POLYSEXUAL, MothVariation.OMNISEXUAL, MothVariation.AROMANTIC, MothVariation.AROACE, MothVariation.DEMIGIRL,
             MothVariation.DEMISEXUAL, MothVariation.DEMIGENDER, MothVariation.DEMIROMANTIC);
 
+    public BlockPos lightPos;
+    private int refreshLightPosIn = 0;
+
     public MothEntity(EntityType<? extends Animal> entityType, Level world) {
         super(entityType, world);
         this.noCulling = true;
@@ -95,9 +98,9 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     public static MothVariation getOtherVariation(RandomSource random) {
-        int rarePatternChance = PrideMothsCommonConfig.BASE_RARE_CHANCE.get();
+        int rarePatternChance = PrideMothsCommonConfig.base_rare_chance;
         if (IPrideMoths.isWorldMothWeek()) {
-            rarePatternChance = PrideMothsCommonConfig.BASE_RARE_CHANCE_MOTH_WEEK.get();
+            rarePatternChance = PrideMothsCommonConfig.moth_week_rare_chance;
         }
 
         if (random.nextInt(rarePatternChance) == 1) {
@@ -142,7 +145,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         date = LocalDate.now();
         int getLocalMonthFromUser = date.get(ChronoField.MONTH_OF_YEAR);
 
-        if (getLocalMonthFromUser == 6 || PrideMothsCommonConfig.GENERATE_PRIDE_VARIANTS_OUTSIDE_OF_PRIDE_MONTH.get()) {
+        if (getLocalMonthFromUser == 6 || PrideMothsCommonConfig.pride_moths_outside_of_pride_moth) {
             setMothVariant(getPrideVariation(random));
         } else {
             setMothVariant(getOtherVariation(random));
@@ -357,6 +360,15 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
                 this.kill();
             } else if (this.getName().getString().equalsIgnoreCase("super-straight")) {
                 this.kill();
+            }
+        }
+
+        if (lightPos != null && this.isAlive() && !level().isClientSide) {
+            if (refreshLightPosIn-- < 0) {
+                refreshLightPosIn = 40 + random.nextInt(100);
+                if (this.distanceToSqr(Vec3.atCenterOf(lightPos)) >= 256 || !level().getBlockState(lightPos).is(PrideMothsMod.LIGHT_SOURCES_TAG) || level().getLightEmission(lightPos) <= 0) {
+                    lightPos = null;
+                }
             }
         }
 
