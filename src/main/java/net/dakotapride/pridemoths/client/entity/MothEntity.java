@@ -86,11 +86,11 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
 
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new MothFlyGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(5, new TravelToLightSourceGoal(this, 32));
+        this.goalSelector.addGoal(5, new FloatGoal(this));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(2, new TravelToLightSourceGoal(this, 32));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(PrideMothsMod.CAN_MOTH_EAT), false));
-        this.targetSelector.addGoal(1, new BreedGoal(this, 1.0));
+        this.targetSelector.addGoal(2, new BreedGoal(this, 1.0));
     }
 
     public static MothVariation getPrideVariation(RandomSource random) {
