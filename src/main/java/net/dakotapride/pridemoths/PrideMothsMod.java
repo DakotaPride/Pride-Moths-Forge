@@ -9,6 +9,7 @@ import net.dakotapride.pridemoths.item.FruitfulStewFoodItem;
 import net.dakotapride.pridemoths.item.GlassJarItem;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -16,10 +17,13 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,7 +33,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -40,77 +43,86 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(PrideMothsMod.MOD_ID)
+@Mod(PrideMothsMod.ID)
 public class PrideMothsMod {
-    public static final String MOD_ID = "pridemoths";
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MOD_ID);
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, MOD_ID);
+    public static final String ID = "pridemoths";
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, ID);
 
-    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("pridemoths", "light_sources"));
-    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("pridemoths", "can_moth_eat"));
+    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(ID, "light_sources"));
+    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(ID, "can_moth_eat"));
 
-    public static DeferredHolder<EntityType<?>, EntityType<MothEntity>> MOTH =
-            ENTITY_TYPES.register("moth",
-                    () -> EntityType.Builder.of(MothEntity::new, MobCategory.MONSTER)
-                            .sized(0.3f, 0.3f)
-                            .build(ResourceLocation.fromNamespaceAndPath(MOD_ID, "moth").toString()));
-    public static DeferredItem<Item> MOTH_SPAWN_EGG = ITEMS.register("moth_spawn_egg",
-            () -> new DeferredSpawnEggItem(() -> PrideMothsMod.MOTH.get(), 0xCECAC4, 0x82635C, new Item.Properties()));
-    public static DeferredItem<Item> MOTH_FUZZ = ITEMS.register("moth_fuzz",
-            () -> new Item(new Item.Properties()));
-    public static DeferredItem<Item> FRUITFUL_STEW = ITEMS.register("fruitful_stew",
-            () -> new FruitfulStewFoodItem(new Item.Properties().stacksTo(1)));
-    public static DeferredItem<Item> GLASS_JAR = ITEMS.register("glass_jar",
-            () -> new GlassJarItem(true, new Item.Properties()));
-    public static DeferredItem<Item> MOTH_JAR = ITEMS.register("moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> RARE_MOTH_JAR = ITEMS.register(MothVariation.RARE.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> TRANSGENDER_MOTH_JAR = ITEMS.register(MothVariation.TRANSGENDER.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> LGBT_MOTH_JAR = ITEMS.register(MothVariation.LGBT.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> NON_BINARY_MOTH_JAR = ITEMS.register(MothVariation.NON_BINARY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> LESBIAN_MOTH_JAR = ITEMS.register(MothVariation.LESBIAN.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> GAY_MOTH_JAR = ITEMS.register(MothVariation.GAY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> AGENDER_MOTH_JAR = ITEMS.register(MothVariation.AGENDER.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> ASEXUAL_MOTH_JAR = ITEMS.register(MothVariation.ASEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> PANSEXUAL_MOTH_JAR = ITEMS.register(MothVariation.PANSEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> BISEXUAL_MOTH_JAR = ITEMS.register(MothVariation.BISEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> POLYAMOROUS_MOTH_JAR = ITEMS.register(MothVariation.POLYAMOROUS.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> POLYSEXUAL_MOTH_JAR = ITEMS.register(MothVariation.POLYSEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> OMNISEXUAL_MOTH_JAR = ITEMS.register(MothVariation.OMNISEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> AROMANTIC_MOTH_JAR = ITEMS.register(MothVariation.AROMANTIC.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMISEXUAL_MOTH_JAR = ITEMS.register(MothVariation.DEMISEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIBOY_MOTH_JAR = ITEMS.register(MothVariation.DEMIBOY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIGIRL_MOTH_JAR = ITEMS.register(MothVariation.DEMIGIRL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIGENDER_MOTH_JAR = ITEMS.register(MothVariation.DEMIGENDER.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> AROACE_MOTH_JAR = ITEMS.register(MothVariation.AROACE.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIROMANTIC_MOTH_JAR = ITEMS.register(MothVariation.DEMIROMANTIC.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> ALLY_MOTH_JAR = ITEMS.register(MothVariation.ALLY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static final DeferredBlock<FuzzyCarpetBlock> FUZZY_CARPET = BLOCKS.register("fuzzy_carpet",
-            () -> new FuzzyCarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).sound(SoundType.WOOL)));
-    public static DeferredItem<BlockItem> FUZZY_CARPET_ITEM = ITEMS.register("fuzzy_carpet",
-            () -> new BlockItem(PrideMothsMod.FUZZY_CARPET.get(), new Item.Properties()));
+    private static ResourceKey<EntityType<?>> keyOf(String id) {
+        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(ID, id));
+    }
+
+//    public static DeferredHolder<EntityType<?>, EntityType<MothEntity>> MOTH =
+//            ENTITY_TYPES.register("moth",
+//                    () -> EntityType.Builder.of(MothEntity::new, MobCategory.MONSTER)
+//                            .sized(0.3f, 0.3f)
+//                            .build(ResourceLocation.fromNamespaceAndPath(MOD_ID, "moth").toString()));
+    public static DeferredHolder<EntityType<?>, EntityType<MothEntity>> MOTH = ENTITY_TYPES.register(
+            "moth", () -> EntityType.Builder.of(MothEntity::new, MobCategory.CREATURE)
+                    .sized(0.45F, 0.45F).build(keyOf("moth")));
+    public static DeferredItem<Item> MOTH_SPAWN_EGG = ITEMS.registerItem("moth_spawn_egg",
+            settings -> new SpawnEggItem(PrideMothsMod.MOTH.get(), settings));
+    public static DeferredItem<Item> MOTH_FUZZ = ITEMS.registerItem("moth_fuzz",
+            Item::new);
+    public static DeferredItem<Item> FRUITFUL_STEW = ITEMS.registerItem("fruitful_stew",
+            settings -> new FruitfulStewFoodItem(settings.stacksTo(1)));
+    public static DeferredItem<Item> GLASS_JAR = ITEMS.registerItem("glass_jar",
+            settings -> new GlassJarItem(true, settings));
+    public static DeferredItem<Item> MOTH_JAR = ITEMS.registerItem("moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> RARE_MOTH_JAR = ITEMS.registerItem(MothVariation.RARE.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> TRANSGENDER_MOTH_JAR = ITEMS.registerItem(MothVariation.TRANSGENDER.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> LGBT_MOTH_JAR = ITEMS.registerItem(MothVariation.LGBT.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> NON_BINARY_MOTH_JAR = ITEMS.registerItem(MothVariation.NON_BINARY.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> LESBIAN_MOTH_JAR = ITEMS.registerItem(MothVariation.LESBIAN.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> GAY_MOTH_JAR = ITEMS.registerItem(MothVariation.GAY.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> AGENDER_MOTH_JAR = ITEMS.registerItem(MothVariation.AGENDER.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> ASEXUAL_MOTH_JAR = ITEMS.registerItem(MothVariation.ASEXUAL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> PANSEXUAL_MOTH_JAR = ITEMS.registerItem(MothVariation.PANSEXUAL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> BISEXUAL_MOTH_JAR = ITEMS.registerItem(MothVariation.BISEXUAL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> POLYAMOROUS_MOTH_JAR = ITEMS.registerItem(MothVariation.POLYAMOROUS.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> POLYSEXUAL_MOTH_JAR = ITEMS.registerItem(MothVariation.POLYSEXUAL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> OMNISEXUAL_MOTH_JAR = ITEMS.registerItem(MothVariation.OMNISEXUAL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> AROMANTIC_MOTH_JAR = ITEMS.registerItem(MothVariation.AROMANTIC.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> DEMISEXUAL_MOTH_JAR = ITEMS.registerItem(MothVariation.DEMISEXUAL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> DEMIBOY_MOTH_JAR = ITEMS.registerItem(MothVariation.DEMIBOY.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> DEMIGIRL_MOTH_JAR = ITEMS.registerItem(MothVariation.DEMIGIRL.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> DEMIGENDER_MOTH_JAR = ITEMS.registerItem(MothVariation.DEMIGENDER.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> AROACE_MOTH_JAR = ITEMS.registerItem(MothVariation.AROACE.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> DEMIROMANTIC_MOTH_JAR = ITEMS.registerItem(MothVariation.DEMIROMANTIC.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static DeferredItem<Item> ALLY_MOTH_JAR = ITEMS.registerItem(MothVariation.ALLY.getVariation() + "_moth_jar",
+            GlassJarItem::new);
+    public static final DeferredBlock<Block> FUZZY_CARPET = BLOCKS.registerBlock("fuzzy_carpet",
+            settings -> new FuzzyCarpetBlock(settings.sound(SoundType.WOOL).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(0.1F).pushReaction(PushReaction.DESTROY)),
+            BlockBehaviour.Properties.of().sound(SoundType.WOOL).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(0.1F).pushReaction(PushReaction.DESTROY));
+    public static DeferredItem<BlockItem> FUZZY_CARPET_ITEM = ITEMS.registerSimpleBlockItem("fuzzy_carpet", FUZZY_CARPET);
 
     public PrideMothsMod(IEventBus bus, ModContainer modContainer) {
 
@@ -173,7 +185,7 @@ public class PrideMothsMod {
         }
     }
 
-    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
@@ -181,7 +193,7 @@ public class PrideMothsMod {
         }
     }
 
-    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = ID, bus = EventBusSubscriber.Bus.MOD)
     public static class ModEventBusEvents {
         @SubscribeEvent
         public static void entityAttributeEvent(EntityAttributeCreationEvent event) {

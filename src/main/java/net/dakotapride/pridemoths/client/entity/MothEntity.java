@@ -33,7 +33,6 @@ import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -46,8 +45,8 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
@@ -68,7 +67,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
 
     public MothEntity(EntityType<? extends Animal> entityType, Level world) {
         super(entityType, world);
-        this.noCulling = true;
+        //this.noCulling = true;
         this.moveControl = new FlyingMoveControl(this, 20, true);
         this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
@@ -81,7 +80,8 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 8.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.4F)
-                .add(Attributes.FLYING_SPEED, 0.25F);
+                .add(Attributes.FLYING_SPEED, 0.25F)
+                .add(Attributes.TEMPT_RANGE, 10.0);
     }
 
     protected void registerGoals() {
@@ -89,7 +89,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         this.goalSelector.addGoal(5, new FloatGoal(this));
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(2, new TravelToLightSourceGoal(this, 32));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(PrideMothsMod.CAN_MOTH_EAT), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, stack -> stack.is(PrideMothsMod.CAN_MOTH_EAT), false));
         this.targetSelector.addGoal(2, new BreedGoal(this, 1.0));
     }
 
@@ -113,7 +113,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel world, AgeableMob entity) {
-        return PrideMothsMod.MOTH.get().create(world);
+        return PrideMothsMod.MOTH.get().create(world, EntitySpawnReason.BREEDING);
     }
 
     @Override
@@ -133,14 +133,14 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     @Override
     protected void ageBoundaryReached() {
         super.ageBoundaryReached();
-        if (!this.isBaby() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
-            this.spawnAtLocation(PrideMothsMod.MOTH_FUZZ.get(), 1);
+        if (!this.isBaby() && this.level() instanceof ServerLevel level && level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+            this.spawnAtLocation(level, PrideMothsMod.MOTH_FUZZ.get());
         }
 
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         LocalDate date;
         date = LocalDate.now();
         int getLocalMonthFromUser = date.get(ChronoField.MONTH_OF_YEAR);
@@ -163,13 +163,13 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
                 if (!this.level().isClientSide && i == 0 && this.canFallInLove()) {
                     this.usePlayerItem(player, hand, itemstack);
                     this.setInLove(player);
-                    return InteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS_SERVER;
                 }
 
                 if (this.isBaby()) {
                     this.usePlayerItem(player, hand, itemstack);
                     this.ageUp(getSpeedUpSecondsWhenFeeding(-i), true);
-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
 
                 if (this.level().isClientSide) {
@@ -352,14 +352,16 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
                 this.setMothVariant(MothVariation.ALLY);
             }
 
-            if (this.getName().getString().equalsIgnoreCase("super straight")) {
-                this.kill();
-            } else if (this.getName().getString().equalsIgnoreCase("super_straight")) {
-                this.kill();
-            } else if (this.getName().getString().equalsIgnoreCase("superstraight")) {
-                this.kill();
-            } else if (this.getName().getString().equalsIgnoreCase("super-straight")) {
-                this.kill();
+            if (this.level() instanceof ServerLevel level) {
+                if (this.getName().getString().equalsIgnoreCase("super straight")) {
+                    this.kill(level);
+                } else if (this.getName().getString().equalsIgnoreCase("super_straight")) {
+                    this.kill(level);
+                } else if (this.getName().getString().equalsIgnoreCase("superstraight")) {
+                    this.kill(level);
+                } else if (this.getName().getString().equalsIgnoreCase("super-straight")) {
+                    this.kill(level);
+                }
             }
         }
 
@@ -395,7 +397,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         FlyingPathNavigation birdNavigation = new FlyingPathNavigation(this, world);
         birdNavigation.setCanOpenDoors(false);
         birdNavigation.setCanFloat(false);
-        birdNavigation.setCanPassDoors(false);
+        //birdNavigation.setCanPassDoors(false);
 
         return birdNavigation;
     }

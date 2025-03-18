@@ -5,9 +5,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import org.apache.commons.lang3.tuple.Pair;
 
-@EventBusSubscriber(modid = PrideMothsMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = PrideMothsMod.ID, bus = EventBusSubscriber.Bus.MOD)
 public class PrideMothsCommonConfig {
 
     PrideMothsCommonConfig(ModConfigSpec.Builder builder) {

@@ -1,5 +1,6 @@
 package net.dakotapride.pridemoths.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -20,8 +21,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FuzzyCarpetBlock extends CarpetBlock {
+    public static final MapCodec<FuzzyCarpetBlock> CODEC = simpleCodec(FuzzyCarpetBlock::new);
     public FuzzyCarpetBlock(Properties settings) {
         super(settings);
+    }
+    @Override
+    public @NotNull MapCodec<? extends FuzzyCarpetBlock> codec() {
+        return CODEC;
     }
 
     @Override

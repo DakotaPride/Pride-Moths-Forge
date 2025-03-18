@@ -92,7 +92,7 @@ public class GlassJarItem extends Item {
             BlockHitResult blockHitResult = BucketItem.getPlayerPOVHitResult(context.getLevel(), context.getPlayer(), ClipContext.Fluid.SOURCE_ONLY);
             BlockPos blockPos = blockHitResult.getBlockPos();
             Direction direction = blockHitResult.getDirection();
-            BlockPos blockPos2 = blockPos.offset(direction.getNormal());
+            BlockPos blockPos2 = blockPos.offset(direction.getUnitVec3i());
 
             moth.setPos(blockPos2.getX() + .5f, blockPos2.getY(), blockPos2.getZ() + .5f);
             moth.setMothVariant(variation);

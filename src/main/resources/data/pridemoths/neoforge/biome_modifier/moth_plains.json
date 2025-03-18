@@ -1,11 +1,11 @@
 {
-  "type": "forge:add_spawns",
+  "type": "neoforge:add_spawns",
   "biomes": [
-    "minecraft:cherry_grove"
+    "minecraft:plains"
   ],
   "spawners": {
     "type": "pridemoths:moth",
-    "weight": 60,
+    "weight": 100,
     "minCount": 3,
     "maxCount": 7
   }
