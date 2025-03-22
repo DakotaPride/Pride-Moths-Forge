@@ -6,7 +6,7 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.0.142'
 }
 
-version = '1.8.6.1+1.21'
+version = '1.8.6.2+1.21'
 group = 'net.dakotapride.pridemoths' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 // archivesBaseName = 'pridemoths'
 

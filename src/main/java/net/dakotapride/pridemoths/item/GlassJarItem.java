@@ -1,8 +1,9 @@
 package net.dakotapride.pridemoths.item;
 
-import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
+import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
+import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,49 +35,49 @@ public class GlassJarItem extends Item {
         MothVariation variant = null;
         ItemStack stack = item.getDefaultInstance();
 
-        if (stack.is(PrideMothsMod.MOTH_JAR.get())) {
+        if (stack.is(ItemsRegistrar.MOTH_JAR.get())) {
             variant = MothVariation.DEFAULT;
-        } else if (stack.is(PrideMothsMod.RARE_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.RARE_MOTH_JAR.get())) {
             variant = MothVariation.RARE;
-        } else if (stack.is(PrideMothsMod.AGENDER_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.AGENDER_MOTH_JAR.get())) {
             variant = MothVariation.AGENDER;
-        } else if (stack.is(PrideMothsMod.AROACE_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.AROACE_MOTH_JAR.get())) {
             variant = MothVariation.AROACE;
-        } else if (stack.is(PrideMothsMod.AROMANTIC_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.AROMANTIC_MOTH_JAR.get())) {
             variant = MothVariation.AROMANTIC;
-        } else if (stack.is(PrideMothsMod.ASEXUAL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.ASEXUAL_MOTH_JAR.get())) {
             variant = MothVariation.ASEXUAL;
-        } else if (stack.is(PrideMothsMod.BISEXUAL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.BISEXUAL_MOTH_JAR.get())) {
             variant = MothVariation.BISEXUAL;
-        } else if (stack.is(PrideMothsMod.DEMIBOY_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.DEMIBOY_MOTH_JAR.get())) {
             variant = MothVariation.DEMIBOY;
-        } else if (stack.is(PrideMothsMod.DEMIGENDER_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.DEMIGENDER_MOTH_JAR.get())) {
             variant = MothVariation.DEMIGENDER;
-        } else if (stack.is(PrideMothsMod.DEMIGIRL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.DEMIGIRL_MOTH_JAR.get())) {
             variant = MothVariation.DEMIGIRL;
-        } else if (stack.is(PrideMothsMod.DEMIROMANTIC_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.DEMIROMANTIC_MOTH_JAR.get())) {
             variant = MothVariation.DEMIROMANTIC;
-        } else if (stack.is(PrideMothsMod.DEMISEXUAL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.DEMISEXUAL_MOTH_JAR.get())) {
             variant = MothVariation.DEMISEXUAL;
-        } else if (stack.is(PrideMothsMod.GAY_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.GAY_MOTH_JAR.get())) {
             variant = MothVariation.GAY;
-        } else if (stack.is(PrideMothsMod.LESBIAN_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.LESBIAN_MOTH_JAR.get())) {
             variant = MothVariation.LESBIAN;
-        } else if (stack.is(PrideMothsMod.LGBT_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.LGBT_MOTH_JAR.get())) {
             variant = MothVariation.LGBT;
-        } else if (stack.is(PrideMothsMod.NON_BINARY_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.NON_BINARY_MOTH_JAR.get())) {
             variant = MothVariation.NON_BINARY;
-        } else if (stack.is(PrideMothsMod.OMNISEXUAL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.OMNISEXUAL_MOTH_JAR.get())) {
             variant = MothVariation.OMNISEXUAL;
-        } else if (stack.is(PrideMothsMod.PANSEXUAL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.PANSEXUAL_MOTH_JAR.get())) {
             variant = MothVariation.PANSEXUAL;
-        } else if (stack.is(PrideMothsMod.POLYAMOROUS_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.POLYAMOROUS_MOTH_JAR.get())) {
             variant = MothVariation.POLYAMOROUS;
-        } else if (stack.is(PrideMothsMod.POLYSEXUAL_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.POLYSEXUAL_MOTH_JAR.get())) {
             variant = MothVariation.POLYSEXUAL;
-        } else if (stack.is(PrideMothsMod.TRANSGENDER_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.TRANSGENDER_MOTH_JAR.get())) {
             variant = MothVariation.TRANSGENDER;
-        } else if (stack.is(PrideMothsMod.ALLY_MOTH_JAR.get())) {
+        } else if (stack.is(ItemsRegistrar.ALLY_MOTH_JAR.get())) {
             variant = MothVariation.ALLY;
         }
 
@@ -87,7 +88,7 @@ public class GlassJarItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         MothVariation variation = getMothVariant(context.getItemInHand().getItem());
         if (variation != null && context.getPlayer() != null && context.getPlayer().isCrouching()) {
-            MothEntity moth = new MothEntity(PrideMothsMod.MOTH.get(), context.getLevel());
+            MothEntity moth = new MothEntity(EntityTypeRegistrar.MOTH.get(), context.getLevel());
 
             BlockHitResult blockHitResult = BucketItem.getPlayerPOVHitResult(context.getLevel(), context.getPlayer(), ClipContext.Fluid.SOURCE_ONLY);
             BlockPos blockPos = blockHitResult.getBlockPos();
@@ -106,7 +107,7 @@ public class GlassJarItem extends Item {
             context.getLevel().addFreshEntity(moth);
 
             if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
-                context.getPlayer().setItemInHand(context.getHand(), new ItemStack(PrideMothsMod.GLASS_JAR.get()));
+                context.getPlayer().setItemInHand(context.getHand(), new ItemStack(ItemsRegistrar.GLASS_JAR.get()));
             }
 
             return InteractionResult.SUCCESS;
@@ -119,7 +120,7 @@ public class GlassJarItem extends Item {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("text.pridemoths.jar.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
 
-        if (!stack.is(PrideMothsMod.GLASS_JAR.get())) {
+        if (!stack.is(ItemsRegistrar.GLASS_JAR.get())) {
             tooltip.add(Component.translatable("text.pridemoths.jar." + getMothVariant(stack.getItem()).getVariation()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
         }
     }
