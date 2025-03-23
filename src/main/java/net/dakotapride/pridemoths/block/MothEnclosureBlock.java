@@ -15,6 +15,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -45,6 +46,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.internal.NeoForgeItemTagsProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -195,7 +198,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                 int i = state.getValue(FUZZ_LEVEL);
                 boolean bl = false;
                 if (i >= 1) {
-                    if (stack.is(Items.SHEARS)) {
+                    if (stack.is(Tags.Items.TOOLS_SHEARS)) {
                         world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
                         dropMothFuzz(world, pos, state);
                         stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
