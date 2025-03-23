@@ -47,6 +47,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.ToolActions;
 import net.neoforged.neoforge.common.data.internal.NeoForgeItemTagsProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,7 +199,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                 int i = state.getValue(FUZZ_LEVEL);
                 boolean bl = false;
                 if (i >= 1) {
-                    if (stack.is(Tags.Items.TOOLS_SHEARS)) {
+                    if (stack.canPerformAction(ToolActions.SHEARS_HARVEST)) {
                         world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
                         dropMothFuzz(world, pos, state);
                         stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
