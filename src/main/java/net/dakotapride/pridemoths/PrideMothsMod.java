@@ -100,6 +100,19 @@ public class PrideMothsMod {
             event.accept(ItemsRegistrar.DEMIROMANTIC_MOTH_JAR);
             event.accept(ItemsRegistrar.ALLY_MOTH_JAR);
         }
+
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(BlocksRegistrar.FUZZY_CARPET);
+            event.accept(BlocksRegistrar.MOTH_ENCLOSURE);
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+            event.accept(ItemsRegistrar.MOTH_FUZZ);
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
+            event.accept(ItemsRegistrar.FRUITFUL_STEW);
+        }
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
