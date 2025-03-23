@@ -2,29 +2,36 @@ package net.dakotapride.pridemoths.block;
 
 import com.mojang.serialization.MapCodec;
 import net.dakotapride.pridemoths.PrideMothsMod;
+import net.dakotapride.pridemoths.item.GlassJarItem;
+import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
 import net.dakotapride.pridemoths.register.ItemsRegistrar;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,6 +42,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -300,24 +308,50 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide
-                && player.isCreative()
+                //&& player.isCreative()
                 && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)
                 && world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
-            int i = state.getValue(FUZZ_LEVEL);
-            if (i > 0) {
+            //int i = state.get(FUZZ_LEVEL);
+            boolean slot0 = state.getValue(SLOT_OCCUPIED_PROPERTIES.getFirst());
+            boolean slot1 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(1));
+            boolean slot2 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(2));
+            if (slot0 || slot1 || slot2) {
                 ItemStack itemStack = new ItemStack(this);
                 itemStack.applyComponents(mothEnclosureBlockEntity.collectComponents());
-                itemStack.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY.with(FUZZ_LEVEL, i));
+                world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack, world.registryAccess()));
+                itemStack.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY
+                        .with(SLOT_OCCUPIED_PROPERTIES.getFirst(), slot0)
+                        .with(SLOT_OCCUPIED_PROPERTIES.get(1), slot1)
+                        .with(SLOT_OCCUPIED_PROPERTIES.get(2), slot2));
                 if (mothEnclosureBlockEntity.hasCustomName()) {
                     itemStack.set(DataComponents.CUSTOM_NAME, mothEnclosureBlockEntity.getCustomName());
                 }
-                ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
+
+                ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
                 itemEntity.setDefaultPickUpDelay();
                 world.addFreshEntity(itemEntity);
             }
         }
 
         return super.playerWillDestroy(world, pos, state, player);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
+        ItemStack itemStack = super.getCloneItemStack(world, pos, state);
+        world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack, world.registryAccess()));
+        return itemStack;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
+        super.appendHoverText(stack, context, tooltip, options);
+
+        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
+            if (itemStack.is(PrideMothsMod.MOTH_JARS) && itemStack.getItem() instanceof GlassJarItem jarItem) {
+                tooltip.add(Component.translatable("container.mothEnclosure.itemCount." + GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            }
+        }
     }
 
     @Override
@@ -349,21 +383,8 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.is(newState.getBlock())) {
-            if (world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity && !mothEnclosureBlockEntity.isEmpty()) {
-                for (int i = 0; i < 3; i++) {
-                    ItemStack itemStack = mothEnclosureBlockEntity.getItem(i);
-                    if (!itemStack.isEmpty()) {
-                        Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
-                    }
-                }
-
-                mothEnclosureBlockEntity.clearContent();
-                world.updateNeighbourForOutputSignal(pos, this);
-            }
-
-            super.onRemove(state, world, pos, newState, moved);
-        }
+        world.updateNeighbourForOutputSignal(pos, this);
+        super.onRemove(state, world, pos, newState, moved);
     }
 
     @Override
