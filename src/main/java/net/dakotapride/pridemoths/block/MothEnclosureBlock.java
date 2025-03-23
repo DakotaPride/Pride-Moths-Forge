@@ -23,10 +23,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -199,7 +196,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                 int i = state.getValue(FUZZ_LEVEL);
                 boolean bl = false;
                 if (i >= 1) {
-                    if (stack.canPerformAction(ToolActions.SHEARS_HARVEST)) {
+                    if (stack.getItem() instanceof ShearsItem) {
                         world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
                         dropMothFuzz(world, pos, state);
                         stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
