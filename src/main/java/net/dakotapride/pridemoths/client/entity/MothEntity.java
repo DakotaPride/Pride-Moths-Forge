@@ -38,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -91,10 +92,15 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         //this.goalSelector.addGoal(1, new MothFlyGoal(this, 1.0));
         this.goalSelector.addGoal(5, new FloatGoal(this));
         //this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new TravelToLightSourceGoal(this, 32));
+        //this.goalSelector.addGoal(2, new TravelToLightSourceGoal(this, 32));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(PrideMothsMod.CAN_MOTH_EAT), false));
         this.targetSelector.addGoal(2, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(8, new MothWanderAroundGoal());
+    }
+
+    @Override
+    public float getWalkTargetValue(BlockPos pos, LevelReader world) {
+        return world.getBlockState(pos).isAir() ? 12.0F : world.getPathfindingCostFromLightLevels(pos);
     }
 
     public static MothVariation getPrideVariation(RandomSource random) {
@@ -367,14 +373,14 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
             }
         }
 
-        if (lightPos != null && this.isAlive() && !level().isClientSide) {
-            if (refreshLightPosIn-- < 0) {
-                refreshLightPosIn = 40 + random.nextInt(100);
-                if (this.distanceToSqr(Vec3.atCenterOf(lightPos)) >= 256 || !level().getBlockState(lightPos).is(PrideMothsMod.LIGHT_SOURCES_TAG) || level().getLightEmission(lightPos) <= 0) {
-                    lightPos = null;
-                }
-            }
-        }
+//        if (lightPos != null && this.isAlive() && !level().isClientSide) {
+//            if (refreshLightPosIn-- < 0) {
+//                refreshLightPosIn = 40 + random.nextInt(100);
+//                if (this.distanceToSqr(Vec3.atCenterOf(lightPos)) >= 256 || !level().getBlockState(lightPos).is(PrideMothsMod.LIGHT_SOURCES_TAG) || level().getLightEmission(lightPos) <= 0) {
+//                    lightPos = null;
+//                }
+//            }
+//        }
 
     }
 

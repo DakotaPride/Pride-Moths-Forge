@@ -72,12 +72,8 @@ public class TravelToLightSourceGoal extends MoveToBlockGoal {
 
     @Override
     protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
-        if (pos != null &&
+        return pos != null &&
                 worldIn.getBlockState(pos).is(PrideMothsMod.LIGHT_SOURCES_TAG) &&
-                worldIn.getLightEmission(pos) > 0 && worldIn instanceof ServerLevel) {
-            return true;
-        } else {
-            return false;
-        }
+                worldIn.getLightEmission(pos) > 0 && worldIn instanceof ServerLevel;
     }
 }
