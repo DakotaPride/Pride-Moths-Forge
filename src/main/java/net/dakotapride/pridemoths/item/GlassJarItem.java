@@ -7,7 +7,6 @@ import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,7 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -99,7 +100,7 @@ public class GlassJarItem extends Item {
             moth.setMothVariant(variation);
             moth.fromJar = true;
 
-            if (this.getDefaultInstance().get(DataComponents.CUSTOM_NAME) != null) {
+            if (context.getItemInHand().hasCustomHoverName()) {
                 moth.setCustomName(context.getItemInHand().getHoverName());
             }
 
@@ -117,7 +118,7 @@ public class GlassJarItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
         tooltip.add(Component.translatable("text.pridemoths.jar.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
 
         if (!stack.is(ItemsRegistrar.GLASS_JAR.get())) {

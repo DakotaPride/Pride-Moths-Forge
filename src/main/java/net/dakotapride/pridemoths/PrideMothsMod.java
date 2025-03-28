@@ -12,34 +12,36 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import software.bernie.geckolib.GeckoLib;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(PrideMothsMod.MOD_ID)
 public class PrideMothsMod {
     public static final String MOD_ID = "pridemoths";
 
-    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("pridemoths", "light_sources"));
-    public static TagKey<Block> MOTH_ENCLOSURES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("pridemoths", "moth_enclosures"));
-    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("pridemoths", "can_moth_eat"));
-    public static TagKey<Item> MOTH_JARS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("pridemoths", "moth_jars"));
+    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, new ResourceLocation("pridemoths", "light_sources"));
+    public static TagKey<Block> MOTH_ENCLOSURES = TagKey.create(Registries.BLOCK, new ResourceLocation("pridemoths", "moth_enclosures"));
+    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, new ResourceLocation("pridemoths", "can_moth_eat"));
+    public static TagKey<Item> MOTH_JARS = TagKey.create(Registries.ITEM, new ResourceLocation("pridemoths", "moth_jars"));
 
     public static final IntegerProperty FUZZ_LEVEL = IntegerProperty.create("fuzz_level", 0, 3);
 
-
-    public PrideMothsMod(IEventBus bus, ModContainer modContainer) {
+    public PrideMothsMod() {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         bus.addListener(this::commonSetup);
 
@@ -49,17 +51,15 @@ public class PrideMothsMod {
         EntityTypeRegistrar.yep(bus);
         DataComponentsRegistrar.yep();
 
-        // GeckoLib.initialize();
+        GeckoLib.initialize();
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, PrideMothsCommonConfig.SPEC, "pridemoths-common.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PrideMothsCommonConfig.SPEC, "pridemoths-common.toml");
 
         // Register the item to a creative tab
         bus.addListener(this::itemGroupEvent);
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
+        // Register ourselves for server and other game events we are interested in
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
@@ -115,7 +115,7 @@ public class PrideMothsMod {
         }
     }
 
-    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
@@ -123,7 +123,7 @@ public class PrideMothsMod {
         }
     }
 
-    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModEventBusEvents {
         @SubscribeEvent
         public static void entityAttributeEvent(EntityAttributeCreationEvent event) {

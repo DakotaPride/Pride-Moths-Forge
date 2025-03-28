@@ -3,10 +3,7 @@ package net.dakotapride.pridemoths.block;
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -15,7 +12,6 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -65,26 +61,26 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         //this.inventory.clear();
         this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (nbt.contains("Items", Tag.TAG_LIST)) {
-            ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
+            ContainerHelper.loadAllItems(nbt, this.inventory);
         }
         this.lastInteractedSlot = nbt.getInt("last_interacted_slot");
-        if (nbt.contains("CustomName", Tag.TAG_STRING)) {
-            this.customName = parseCustomNameSafe(nbt.getString("CustomName"), registryLookup);
+        if (nbt.contains("CustomName", 8)) {
+            this.customName = Component.Serializer.fromJson(nbt.getString("CustomName"));
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        ContainerHelper.saveAllItems(nbt, this.inventory, false, registryLookup);
+    protected void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
+        ContainerHelper.saveAllItems(nbt, this.inventory, false);
         nbt.putInt("last_interacted_slot", this.lastInteractedSlot);
         if (this.hasCustomName()) {
-            nbt.putString("CustomName", Component.Serializer.toJson(this.customName, registryLookup));
+            nbt.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
     }
 
@@ -142,7 +138,7 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     @Override
     public boolean canTakeItem(Container hopperInventory, int slot, ItemStack stack) {
         return hopperInventory.hasAnyMatching(
-                stack2 -> stack2.isEmpty() || ItemStack.isSameItemSameComponents(stack, stack2) && stack2.getCount() + stack.getCount() <= hopperInventory.getMaxStackSize(stack2)
+                stack2 -> stack2.isEmpty() || ItemStack.isSameItemSameTags(stack, stack2) && stack2.getCount() + stack.getCount() <= hopperInventory.getMaxStackSize()
         );
     }
 
@@ -165,25 +161,25 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
         return this.lastInteractedSlot;
     }
 
-    @Override
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput components) {
-        super.applyImplicitComponents(components);
-        this.customName = components.get(DataComponents.CUSTOM_NAME);
-        components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(this.inventory);
-    }
-
-    @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
-        super.collectImplicitComponents(componentMapBuilder);
-        componentMapBuilder.set(DataComponents.CUSTOM_NAME, this.customName);
-        componentMapBuilder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.inventory));
-    }
-
-    @Override
-    public void removeComponentsFromTag(CompoundTag nbt) {
-        nbt.remove("CustomName");
-        nbt.remove("Items");
-    }
+    //    @Override
+//    protected void applyImplicitComponents(BlockEntity.DataComponentInput components) {
+//        super.applyImplicitComponents(components);
+//        this.customName = components.get(DataComponents.CUSTOM_NAME);
+//        components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(this.inventory);
+//    }
+//
+//    @Override
+//    protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
+//        super.collectImplicitComponents(componentMapBuilder);
+//        componentMapBuilder.set(DataComponents.CUSTOM_NAME, this.customName);
+//        componentMapBuilder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.inventory));
+//    }
+//
+//    @Override
+//    public void removeComponentsFromTag(CompoundTag nbt) {
+//        nbt.remove("CustomName");
+//        nbt.remove("Items");
+//    }
 
 //    @Nullable
 //    @Override

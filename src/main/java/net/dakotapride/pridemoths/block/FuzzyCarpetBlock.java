@@ -25,7 +25,7 @@ public class FuzzyCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext context, List<Component> tooltip, @NotNull TooltipFlag options) {
+    public void appendHoverText(@NotNull ItemStack stack, BlockGetter getter, List<Component> tooltip, @NotNull TooltipFlag options) {
         tooltip.add(Component.translatable("text.pridemoths.fuzzy_carpet.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
     }
 

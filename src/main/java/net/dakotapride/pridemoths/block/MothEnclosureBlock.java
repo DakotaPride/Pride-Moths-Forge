@@ -1,6 +1,5 @@
 package net.dakotapride.pridemoths.block;
 
-import com.mojang.serialization.MapCodec;
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.item.GlassJarItem;
 import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
@@ -8,30 +7,27 @@ import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.BlockItemStateProperties;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -43,9 +39,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.ToolActions;
-import net.neoforged.neoforge.common.data.internal.NeoForgeItemTagsProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,7 +46,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
-    public static final MapCodec<MothEnclosureBlock> CODEC = simpleCodec(MothEnclosureBlock::new);
+    //public static final MapCodec<MothEnclosureBlock> CODEC = simpleCodec(MothEnclosureBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty FUZZ_LEVEL = PrideMothsMod.FUZZ_LEVEL;
     public static final List<BooleanProperty> SLOT_OCCUPIED_PROPERTIES = List.of(
@@ -74,12 +67,12 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return SLOT_OCCUPIED_PROPERTIES != null;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         if (random.nextFloat() < 0.8F) {
             if (checkIfOnlyOneSlotIsFilled(state)) {
                 if (state.is(PrideMothsMod.MOTH_ENCLOSURES, statex -> statex.hasProperty(FUZZ_LEVEL))) {
@@ -190,7 +183,18 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
+
+        if (!stack.isEmpty()) {
+            return useItemOn(stack, state, world, pos, player, hand, hit);
+        } else {
+            return useWithoutItem(state, world, pos, player, hit);
+        }
+    }
+
+    //@Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
             if (!stack.is(PrideMothsMod.MOTH_JARS)) {
                 int i = state.getValue(FUZZ_LEVEL);
@@ -199,7 +203,9 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                     if (stack.getItem() instanceof ShearsItem) {
                         world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
                         dropMothFuzz(world, pos, state);
-                        stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                        stack.hurtAndBreak(1, player, (p) -> {
+                            p.broadcastBreakEvent(hand);
+                        });
                         bl = true;
                         world.gameEvent(player, GameEvent.SHEAR, pos);
                     }
@@ -208,27 +214,27 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                 if (bl) {
                     this.takeMothFuzz(world, state, pos);
 
-                    return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                    return InteractionResult.sidedSuccess(world.isClientSide);
                 }
 
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.PASS;
             } else {
                 OptionalInt optionalInt = this.getSlotForHitPos(hit, state);
                 if (optionalInt.isEmpty()) {
-                    return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+                    return InteractionResult.FAIL;
                 } else if (state.getValue(SLOT_OCCUPIED_PROPERTIES.get(optionalInt.getAsInt()))) {
-                    return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                    return InteractionResult.PASS;
                 } else {
                     tryAddGlassJarWithMothInside(world, pos, player, mothEnclosureBlockEntity, stack, optionalInt.getAsInt());
-                    return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                    return InteractionResult.sidedSuccess(world.isClientSide);
                 }
             }
         } else {
-            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.FAIL;
         }
     }
 
-    @Override
+    //@Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
             OptionalInt optionalInt = this.getSlotForHitPos(hit, state);
@@ -288,7 +294,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
         if (!world.isClientSide) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             SoundEvent soundEvent = SoundEvents.BOTTLE_EMPTY;
-            blockEntity.setItem(slot, stack.consumeAndReturn(1, player));
+            blockEntity.setItem(slot, stack.split(1));
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
@@ -307,25 +313,31 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide
                 //&& player.isCreative()
                 && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)
                 && world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
             //int i = state.get(FUZZ_LEVEL);
-            boolean slot0 = state.getValue(SLOT_OCCUPIED_PROPERTIES.getFirst());
+            boolean slot0 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(0));
             boolean slot1 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(1));
             boolean slot2 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(2));
             if (slot0 || slot1 || slot2) {
                 ItemStack itemStack = new ItemStack(this);
-                itemStack.applyComponents(mothEnclosureBlockEntity.collectComponents());
-                world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack, world.registryAccess()));
-                itemStack.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY
-                        .with(SLOT_OCCUPIED_PROPERTIES.getFirst(), slot0)
-                        .with(SLOT_OCCUPIED_PROPERTIES.get(1), slot1)
-                        .with(SLOT_OCCUPIED_PROPERTIES.get(2), slot2));
+                itemStack.deserializeNBT(mothEnclosureBlockEntity.getUpdateTag());
+                world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack));
+//                itemStack.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY
+//                        .with(SLOT_OCCUPIED_PROPERTIES.get(0), slot0)
+//                        .with(SLOT_OCCUPIED_PROPERTIES.get(1), slot1)
+//                        .with(SLOT_OCCUPIED_PROPERTIES.get(2), slot2));
+                CompoundTag compoundtag = new CompoundTag();
+                compoundtag.putBoolean("slot_0_occupied", slot0);
+                compoundtag.putBoolean("slot_1_occupied", slot1);
+                compoundtag.putBoolean("slot_2_occupied", slot2);
+                BlockItem.setBlockEntityData(itemStack, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get(), compoundtag);
+                itemStack.addTagElement("BlockStateTag", compoundtag);
                 if (mothEnclosureBlockEntity.hasCustomName()) {
-                    itemStack.set(DataComponents.CUSTOM_NAME, mothEnclosureBlockEntity.getCustomName());
+                    itemStack.setHoverName(mothEnclosureBlockEntity.getCustomName());
                 }
 
                 ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
@@ -334,34 +346,42 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
             }
         }
 
-        return super.playerWillDestroy(world, pos, state, player);
+        super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         ItemStack itemStack = super.getCloneItemStack(world, pos, state);
-        world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack, world.registryAccess()));
+        world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack));
         return itemStack;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
+    public void appendHoverText(ItemStack stack, BlockGetter context, List<Component> tooltip, TooltipFlag options) {
         super.appendHoverText(stack, context, tooltip, options);
+        CompoundTag compoundtag = BlockItem.getBlockEntityData(stack);
 
-        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
-            if (itemStack.is(PrideMothsMod.MOTH_JARS) && itemStack.getItem() instanceof GlassJarItem jarItem) {
-                tooltip.add(Component.translatable("container.mothEnclosure.itemCount." + GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        //for (ItemStack itemStack : stack.getTagElement("Items")) {
+        if (compoundtag != null) {
+            if (compoundtag.contains("Items", 9)) {
+                NonNullList<ItemStack> nonnulllist = NonNullList.withSize(3, ItemStack.EMPTY);
+
+                for (ItemStack itemStack : nonnulllist) {
+                    if (itemStack.is(PrideMothsMod.MOTH_JARS) && itemStack.getItem() instanceof GlassJarItem jarItem) {
+                        tooltip.add(Component.translatable("container.mothEnclosure.itemCount." + GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                    }
+                }
             }
         }
     }
 
-    @Override
-    public MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
-    }
+//    @Override
+//    public MapCodec<? extends BaseEntityBlock> codec() {
+//        return CODEC;
+//    }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -383,7 +403,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
         world.updateNeighbourForOutputSignal(pos, this);
         super.onRemove(state, world, pos, newState, moved);
     }
@@ -399,7 +419,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
@@ -425,7 +445,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
         return getRedstoneAnalogOutput(state);
     }
 }

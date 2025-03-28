@@ -1,28 +1,27 @@
 package net.dakotapride.pridemoths.config;
 
 import net.dakotapride.pridemoths.PrideMothsMod;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.ModConfigSpec;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
-@EventBusSubscriber(modid = PrideMothsMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = PrideMothsMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PrideMothsCommonConfig {
 
-    PrideMothsCommonConfig(ModConfigSpec.Builder builder) {
+    PrideMothsCommonConfig(ForgeConfigSpec.Builder builder) {
         // Define values here in final fields
     }
 
     // Somewhere the constructor is accessible
 
 
-    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
-    public static final ModConfigSpec SPEC;
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    public static final ForgeConfigSpec SPEC;
 
-    public static ModConfigSpec.BooleanValue GENERATE_PRIDE_VARIANTS_OUTSIDE_OF_PRIDE_MONTH;
-    public static ModConfigSpec.IntValue BASE_RARE_CHANCE;
-    public static ModConfigSpec.IntValue BASE_RARE_CHANCE_MOTH_WEEK;
+    public static ForgeConfigSpec.BooleanValue GENERATE_PRIDE_VARIANTS_OUTSIDE_OF_PRIDE_MONTH;
+    public static ForgeConfigSpec.IntValue BASE_RARE_CHANCE;
+    public static ForgeConfigSpec.IntValue BASE_RARE_CHANCE_MOTH_WEEK;
 
     public static boolean pride_moths_outside_of_pride_moth;
     public static int base_rare_chance;
