@@ -5,7 +5,6 @@ import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -41,18 +40,32 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     }
 
     private void updateState(int interactedSlot) {
+//        if (interactedSlot >= 0 && interactedSlot < 3) {
+//            this.lastInteractedSlot = interactedSlot;
+//            BlockState blockState = this.getBlockState();
+//
+//            for (int i = 0; i < MothEnclosureBlock.SLOT_OCCUPIED_PROPERTIES.size(); i++) {
+//                boolean bl = !this.getItem(i).isEmpty();
+//                BooleanProperty booleanProperty = MothEnclosureBlock.SLOT_OCCUPIED_PROPERTIES.get(i);
+//                blockState = blockState.setValue(booleanProperty, bl);
+//            }
+//
+//            (Objects.requireNonNull(this.getLevel())).setBlock(this.getBlockPos(), blockState, Block.UPDATE_ALL);
+//            this.getLevel().gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(blockState));
+//        }
+
+
         if (interactedSlot >= 0 && interactedSlot < 3) {
             this.lastInteractedSlot = interactedSlot;
-            BlockState blockState = this.getBlockState();
+            BlockState blockstate = this.getBlockState();
 
-            for (int i = 0; i < MothEnclosureBlock.SLOT_OCCUPIED_PROPERTIES.size(); i++) {
-                boolean bl = !this.getItem(i).isEmpty();
-                BooleanProperty booleanProperty = MothEnclosureBlock.SLOT_OCCUPIED_PROPERTIES.get(i);
-                blockState = blockState.setValue(booleanProperty, bl);
+            for(int i = 0; i < MothEnclosureBlock.SLOT_OCCUPIED_PROPERTIES.size(); ++i) {
+                boolean flag = !this.getItem(i).isEmpty();
+                BooleanProperty booleanproperty = MothEnclosureBlock.SLOT_OCCUPIED_PROPERTIES.get(i);
+                blockstate = blockstate.setValue(booleanproperty, Boolean.valueOf(flag));
             }
 
-            (Objects.requireNonNull(this.getLevel())).setBlock(this.getBlockPos(), blockState, Block.UPDATE_ALL);
-            this.getLevel().gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(blockState));
+            Objects.requireNonNull(this.level).setBlock(this.worldPosition, blockstate, 3);
         }
     }
 
@@ -69,6 +82,7 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
 //        if (nbt.contains("Items", Tag.TAG_LIST)) {
 //            ContainerHelper.loadAllItems(nbt, this.inventory);
 //        }
+        ContainerHelper.loadAllItems(nbt, this.inventory);
         this.lastInteractedSlot = nbt.getInt("last_interacted_slot");
         if (nbt.contains("CustomName", 8)) {
             this.customName = Component.Serializer.fromJson(nbt.getString("CustomName"));
@@ -78,9 +92,12 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     @Override
     protected void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
-        //ContainerHelper.saveAllItems(nbt, this.inventory, false);
+        ContainerHelper.saveAllItems(nbt, this.inventory, false);
         nbt.putInt("last_interacted_slot", this.lastInteractedSlot);
-        if (this.hasCustomName()) {
+//        if (this.hasCustomName()) {
+//            nbt.putString("CustomName", Component.Serializer.toJson(this.customName));
+//        }
+        if (this.customName != null) {
             nbt.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
     }
@@ -208,5 +225,9 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     @Override
     public Component getCustomName() {
         return this.customName;
+    }
+
+    public void setCustomName(@Nullable Component customName) {
+        this.customName = customName;
     }
 }

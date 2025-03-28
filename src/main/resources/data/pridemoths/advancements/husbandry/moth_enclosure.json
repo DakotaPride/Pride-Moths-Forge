@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "id": "pridemoths:moth_enclosure"
+      "item": "pridemoths:moth_enclosure"
     },
     "title": {
       "translate": "advancements.pridemoths.moth_enclosure.title"

@@ -1,7 +1,7 @@
 {
-  "neoforge:conditions": [
+  "conditions": [
     {
-      "type": "neoforge:mod_loaded",
+      "type": "forge:mod_loaded",
       "modid": "create"
     }
   ],
@@ -30,7 +30,7 @@
   ],
   "results": [
     {
-      "id": "minecraft:light_blue_wool"
+      "item": "minecraft:light_blue_wool"
     }
   ]
 }

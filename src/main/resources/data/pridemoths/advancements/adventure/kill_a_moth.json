@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "id": "pridemoths:moth_fuzz"
+      "item": "pridemoths:moth_fuzz"
     },
     "title": {
       "translate": "advancements.pridemoths.kill_a_moth.title"

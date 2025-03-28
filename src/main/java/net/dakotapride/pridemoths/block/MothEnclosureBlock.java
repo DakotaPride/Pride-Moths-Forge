@@ -19,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -297,6 +299,9 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             SoundEvent soundEvent = SoundEvents.BOTTLE_EMPTY;
             blockEntity.setItem(slot, stack.split(1));
+            if (player.isCreative()) {
+                stack.grow(1);
+            }
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
@@ -315,55 +320,57 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide
-                //&& player.isCreative()
-                && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)
-                && world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
-            //int i = state.get(FUZZ_LEVEL);
-            if (mothEnclosureBlockEntity.hasCustomName()) {
-                ItemStack itemStack = new ItemStack(this);
-                //itemStack.deserializeNBT(mothEnclosureBlockEntity.getUpdateTag());
-                //world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack));
-//                itemStack.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY
-//                        .with(SLOT_OCCUPIED_PROPERTIES.get(0), slot0)
-//                        .with(SLOT_OCCUPIED_PROPERTIES.get(1), slot1)
-//                        .with(SLOT_OCCUPIED_PROPERTIES.get(2), slot2));
-//                CompoundTag compoundTag = new CompoundTag();
-//                compoundTag.putBoolean("slot_0_occupied", slot0);
-//                compoundTag.putBoolean("slot_1_occupied", slot1);
-//                compoundTag.putBoolean("slot_2_occupied", slot2);
-//                BlockItem.setBlockEntityData(itemStack, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get(), compoundTag);
-//                itemStack.addTagElement("BlockStateTag", compoundTag);
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        BlockEntity blockentity = level.getBlockEntity(pos);
+        if (!level.isClientSide) {
+            if (blockentity instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
+                ItemStack itemstack = new ItemStack(this);
                 if (mothEnclosureBlockEntity.hasCustomName()) {
-                    itemStack.setHoverName(mothEnclosureBlockEntity.getCustomName());
+                    itemstack.setHoverName(mothEnclosureBlockEntity.getCustomName());
                 }
 
-                if (!mothEnclosureBlockEntity.isEmpty()) {
-                    for(int i = 0; i < 6; ++i) {
-                        ItemStack itemstack = mothEnclosureBlockEntity.getItem(i);
-                        if (!itemstack.isEmpty()) {
-                            Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), itemstack);
-                        }
-                    }
-
-                    mothEnclosureBlockEntity.clearContent();
-                    world.updateNeighbourForOutputSignal(pos, this);
-                }
-
-                ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
-                itemEntity.setDefaultPickUpDelay();
-                world.addFreshEntity(itemEntity);
+                ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack);
+                itementity.setDefaultPickUpDelay();
+                level.addFreshEntity(itementity);
             }
         }
 
-        super.playerWillDestroy(world, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newstate, boolean b) {
-        level.updateNeighbourForOutputSignal(pos, this);
-        super.onRemove(state, level, pos, newstate, b);
+        if (!level.isClientSide) {
+            if (!state.is(newstate.getBlock())) {
+                BlockEntity blockentity = level.getBlockEntity(pos);
+                if (blockentity instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
+                    if (!mothEnclosureBlockEntity.isEmpty()) {
+                        for(int i = 0; i < 3; ++i) {
+                            ItemStack itemstack = mothEnclosureBlockEntity.getItem(i);
+                            if (!itemstack.isEmpty()) {
+                                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), itemstack);
+                            }
+                        }
+
+                        mothEnclosureBlockEntity.clearContent();
+                        level.updateNeighbourForOutputSignal(pos, this);
+                    }
+                }
+
+                super.onRemove(state, level, pos, newstate, b);
+            }
+        }
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
+        if (stack.hasCustomHoverName()) {
+            BlockEntity blockentity = level.getBlockEntity(pos);
+            if (blockentity instanceof MothEnclosureBlockEntity) {
+                ((MothEnclosureBlockEntity)blockentity).setCustomName(stack.getHoverName());
+            }
+        }
+
     }
 
     @Override
@@ -379,17 +386,17 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
         CompoundTag compoundtag = BlockItem.getBlockEntityData(stack);
 
         //for (ItemStack itemStack : stack.getTagElement("Items")) {
-        if (compoundtag != null) {
-            if (compoundtag.contains("Items", 9)) {
-                NonNullList<ItemStack> nonnulllist = NonNullList.withSize(3, ItemStack.EMPTY);
-
-                for (ItemStack itemStack : nonnulllist) {
-                    if (itemStack.is(PrideMothsMod.MOTH_JARS) && itemStack.getItem() instanceof GlassJarItem jarItem) {
-                        tooltip.add(Component.translatable("container.mothEnclosure.itemCount." + GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-                    }
-                }
-            }
-        }
+//        if (compoundtag != null) {
+//            if (compoundtag.contains("Items", 9)) {
+//                NonNullList<ItemStack> nonnulllist = NonNullList.withSize(3, ItemStack.EMPTY);
+//
+//                for (ItemStack itemStack : nonnulllist) {
+//                    if (itemStack.is(PrideMothsMod.MOTH_JARS) && itemStack.getItem() instanceof GlassJarItem jarItem) {
+//                        tooltip.add(Component.translatable("container.mothEnclosure.itemCount." + GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+//                    }
+//                }
+//            }
+//        }
     }
 
 //    @Override

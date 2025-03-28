@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "id": "pridemoths:moth_jar"
+      "item": "pridemoths:moth_jar"
     },
     "title": {
       "translate": "advancements.pridemoths.moth_jar.title"
@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#pridemoths:moth_jars"
+            "tag": "pridemoths:moth_jars"
           }
         ]
       }
