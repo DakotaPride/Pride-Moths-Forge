@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -319,25 +321,34 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                 && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)
                 && world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
             //int i = state.get(FUZZ_LEVEL);
-            boolean slot0 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(0));
-            boolean slot1 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(1));
-            boolean slot2 = state.getValue(SLOT_OCCUPIED_PROPERTIES.get(2));
-            if (slot0 || slot1 || slot2) {
+            if (mothEnclosureBlockEntity.hasCustomName()) {
                 ItemStack itemStack = new ItemStack(this);
-                itemStack.deserializeNBT(mothEnclosureBlockEntity.getUpdateTag());
-                world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack));
+                //itemStack.deserializeNBT(mothEnclosureBlockEntity.getUpdateTag());
+                //world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack));
 //                itemStack.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY
 //                        .with(SLOT_OCCUPIED_PROPERTIES.get(0), slot0)
 //                        .with(SLOT_OCCUPIED_PROPERTIES.get(1), slot1)
 //                        .with(SLOT_OCCUPIED_PROPERTIES.get(2), slot2));
-                CompoundTag compoundtag = new CompoundTag();
-                compoundtag.putBoolean("slot_0_occupied", slot0);
-                compoundtag.putBoolean("slot_1_occupied", slot1);
-                compoundtag.putBoolean("slot_2_occupied", slot2);
-                BlockItem.setBlockEntityData(itemStack, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get(), compoundtag);
-                itemStack.addTagElement("BlockStateTag", compoundtag);
+//                CompoundTag compoundTag = new CompoundTag();
+//                compoundTag.putBoolean("slot_0_occupied", slot0);
+//                compoundTag.putBoolean("slot_1_occupied", slot1);
+//                compoundTag.putBoolean("slot_2_occupied", slot2);
+//                BlockItem.setBlockEntityData(itemStack, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get(), compoundTag);
+//                itemStack.addTagElement("BlockStateTag", compoundTag);
                 if (mothEnclosureBlockEntity.hasCustomName()) {
                     itemStack.setHoverName(mothEnclosureBlockEntity.getCustomName());
+                }
+
+                if (!mothEnclosureBlockEntity.isEmpty()) {
+                    for(int i = 0; i < 6; ++i) {
+                        ItemStack itemstack = mothEnclosureBlockEntity.getItem(i);
+                        if (!itemstack.isEmpty()) {
+                            Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), itemstack);
+                        }
+                    }
+
+                    mothEnclosureBlockEntity.clearContent();
+                    world.updateNeighbourForOutputSignal(pos, this);
                 }
 
                 ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
@@ -350,8 +361,14 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newstate, boolean b) {
+        level.updateNeighbourForOutputSignal(pos, this);
+        super.onRemove(state, level, pos, newstate, b);
+    }
+
+    @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
-        ItemStack itemStack = super.getCloneItemStack(world, pos, state);
+        ItemStack itemStack = super.getCloneItemStack(state, target, world, pos, player);
         world.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE_BLOCK_ENTITY.get()).ifPresent(blockEntity -> blockEntity.saveToItem(itemStack));
         return itemStack;
     }
@@ -400,12 +417,6 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, FUZZ_LEVEL);
         SLOT_OCCUPIED_PROPERTIES.forEach(builder::add);
-    }
-
-    @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        world.updateNeighbourForOutputSignal(pos, this);
-        super.onRemove(state, world, pos, newState, moved);
     }
 
     @Override

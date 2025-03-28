@@ -63,11 +63,12 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
+        this.inventory.clear();
         //this.inventory.clear();
-        this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        if (nbt.contains("Items", Tag.TAG_LIST)) {
-            ContainerHelper.loadAllItems(nbt, this.inventory);
-        }
+        //this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+//        if (nbt.contains("Items", Tag.TAG_LIST)) {
+//            ContainerHelper.loadAllItems(nbt, this.inventory);
+//        }
         this.lastInteractedSlot = nbt.getInt("last_interacted_slot");
         if (nbt.contains("CustomName", 8)) {
             this.customName = Component.Serializer.fromJson(nbt.getString("CustomName"));
@@ -77,7 +78,7 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     @Override
     protected void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
-        ContainerHelper.saveAllItems(nbt, this.inventory, false);
+        //ContainerHelper.saveAllItems(nbt, this.inventory, false);
         nbt.putInt("last_interacted_slot", this.lastInteractedSlot);
         if (this.hasCustomName()) {
             nbt.putString("CustomName", Component.Serializer.toJson(this.customName));
