@@ -25,16 +25,19 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(PrideMothsMod.MOD_ID)
 public class PrideMothsMod {
     public static final String MOD_ID = "pridemoths";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("pridemoths", "light_sources"));
-    public static TagKey<Block> MOTH_ENCLOSURES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("pridemoths", "moth_enclosures"));
-    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("pridemoths", "can_moth_eat"));
-    public static TagKey<Item> MOTH_JARS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("pridemoths", "moth_jars"));
+    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.MOD_ID, "light_sources"));
+    public static TagKey<Block> MOTH_ENCLOSURES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.MOD_ID, "moth_enclosures"));
+    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.MOD_ID, "can_moth_eat"));
+    public static TagKey<Item> MOTH_JARS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.MOD_ID, "moth_jars"));
 
     public static final IntegerProperty FUZZ_LEVEL = IntegerProperty.create("fuzz_level", 0, 3);
 
@@ -98,6 +101,14 @@ public class PrideMothsMod {
             event.accept(ItemsRegistrar.DEMIGENDER_MOTH_JAR);
             event.accept(ItemsRegistrar.AROACE_MOTH_JAR);
             event.accept(ItemsRegistrar.DEMIROMANTIC_MOTH_JAR);
+            event.accept(ItemsRegistrar.GENDERFLUID_MOTH_JAR);
+            event.accept(ItemsRegistrar.INTERSEX_MOTH_JAR);
+            event.accept(ItemsRegistrar.XENOGENDER_MOTH_JAR);
+            event.accept(ItemsRegistrar.GENDER_QUEER_MOTH_JAR);
+            event.accept(ItemsRegistrar.GENDERFAE_MOTH_JAR);
+            event.accept(ItemsRegistrar.GENDERFAUN_MOTH_JAR);
+            event.accept(ItemsRegistrar.BIGENDER_MOTH_JAR);
+            event.accept(ItemsRegistrar.PANGENDER_MOTH_JAR);
             event.accept(ItemsRegistrar.ALLY_MOTH_JAR);
         }
 

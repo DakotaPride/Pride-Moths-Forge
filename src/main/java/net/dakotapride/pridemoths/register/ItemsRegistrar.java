@@ -23,48 +23,40 @@ public class ItemsRegistrar {
             () -> new GlassJarItem(true, new Item.Properties()));
     public static DeferredItem<Item> MOTH_JAR = ITEMS.register("moth_jar",
             () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> RARE_MOTH_JAR = ITEMS.register(MothVariation.RARE.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> TRANSGENDER_MOTH_JAR = ITEMS.register(MothVariation.TRANSGENDER.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> LGBT_MOTH_JAR = ITEMS.register(MothVariation.LGBT.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> NON_BINARY_MOTH_JAR = ITEMS.register(MothVariation.NON_BINARY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> LESBIAN_MOTH_JAR = ITEMS.register(MothVariation.LESBIAN.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> GAY_MOTH_JAR = ITEMS.register(MothVariation.GAY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> AGENDER_MOTH_JAR = ITEMS.register(MothVariation.AGENDER.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> ASEXUAL_MOTH_JAR = ITEMS.register(MothVariation.ASEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> PANSEXUAL_MOTH_JAR = ITEMS.register(MothVariation.PANSEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> BISEXUAL_MOTH_JAR = ITEMS.register(MothVariation.BISEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> POLYAMOROUS_MOTH_JAR = ITEMS.register(MothVariation.POLYAMOROUS.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> POLYSEXUAL_MOTH_JAR = ITEMS.register(MothVariation.POLYSEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> OMNISEXUAL_MOTH_JAR = ITEMS.register(MothVariation.OMNISEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> AROMANTIC_MOTH_JAR = ITEMS.register(MothVariation.AROMANTIC.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMISEXUAL_MOTH_JAR = ITEMS.register(MothVariation.DEMISEXUAL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIBOY_MOTH_JAR = ITEMS.register(MothVariation.DEMIBOY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIGIRL_MOTH_JAR = ITEMS.register(MothVariation.DEMIGIRL.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIGENDER_MOTH_JAR = ITEMS.register(MothVariation.DEMIGENDER.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> AROACE_MOTH_JAR = ITEMS.register(MothVariation.AROACE.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> DEMIROMANTIC_MOTH_JAR = ITEMS.register(MothVariation.DEMIROMANTIC.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
-    public static DeferredItem<Item> ALLY_MOTH_JAR = ITEMS.register(MothVariation.ALLY.getVariation() + "_moth_jar",
-            () -> new GlassJarItem(new Item.Properties()));
+    public static DeferredItem<Item> RARE_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.RARE);
+    public static DeferredItem<Item> TRANSGENDER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.TRANSGENDER);
+    public static DeferredItem<Item> LGBT_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.LGBT);
+    public static DeferredItem<Item> NON_BINARY_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.NON_BINARY);
+    public static DeferredItem<Item> LESBIAN_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.LESBIAN);
+    public static DeferredItem<Item> GAY_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.GAY);
+    public static DeferredItem<Item> AGENDER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.AGENDER);
+    public static DeferredItem<Item> ASEXUAL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.ASEXUAL);
+    public static DeferredItem<Item> PANSEXUAL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.PANSEXUAL);
+    public static DeferredItem<Item> BISEXUAL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.BISEXUAL);
+    public static DeferredItem<Item> POLYAMOROUS_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.POLYAMOROUS);
+    public static DeferredItem<Item> POLYSEXUAL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.POLYSEXUAL);
+    public static DeferredItem<Item> OMNISEXUAL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.OMNISEXUAL);
+    public static DeferredItem<Item> AROMANTIC_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.AROMANTIC);
+    public static DeferredItem<Item> DEMISEXUAL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.DEMISEXUAL);
+    public static DeferredItem<Item> DEMIBOY_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.DEMIBOY);
+    public static DeferredItem<Item> DEMIGIRL_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.DEMIGIRL);
+    public static DeferredItem<Item> DEMIGENDER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.DEMIGENDER);
+    public static DeferredItem<Item> AROACE_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.AROACE);
+    public static DeferredItem<Item> DEMIROMANTIC_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.DEMIROMANTIC);
+    public static DeferredItem<Item> GENDERFLUID_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.GENDERFLUID);
+    public static DeferredItem<Item> INTERSEX_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.INTERSEX);
+    public static DeferredItem<Item> XENOGENDER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.XENOGENDER);
+    public static DeferredItem<Item> GENDER_QUEER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.GENDER_QUEER);
+    public static DeferredItem<Item> GENDERFAE_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.GENDERFAE);
+    public static DeferredItem<Item> GENDERFAUN_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.GENDERFAUN);
+    public static DeferredItem<Item> BIGENDER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.BIGENDER);
+    public static DeferredItem<Item> PANGENDER_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.PANGENDER);
+    public static DeferredItem<Item> ALLY_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.ALLY);
+
+
+    private static DeferredItem<Item> registerMothContainedWithinJarItem(MothVariation variation) {
+        return ITEMS.register(variation.getVariation() + "_moth_jar", () -> new GlassJarItem(new Item.Properties()));
+    }
 
     public static void yep(IEventBus bus) {
         ITEMS.register(bus);

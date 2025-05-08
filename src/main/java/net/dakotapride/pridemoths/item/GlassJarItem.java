@@ -1,5 +1,6 @@
 package net.dakotapride.pridemoths.item;
 
+import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
@@ -77,6 +78,22 @@ public class GlassJarItem extends Item {
             variant = MothVariation.POLYSEXUAL;
         } else if (stack.is(ItemsRegistrar.TRANSGENDER_MOTH_JAR.get())) {
             variant = MothVariation.TRANSGENDER;
+        } else if (stack.is(ItemsRegistrar.GENDERFLUID_MOTH_JAR)) {
+            variant = MothVariation.GENDERFLUID;
+        } else if (stack.is(ItemsRegistrar.INTERSEX_MOTH_JAR)) {
+            variant = MothVariation.INTERSEX;
+        } else if (stack.is(ItemsRegistrar.XENOGENDER_MOTH_JAR)) {
+            variant = MothVariation.XENOGENDER;
+        } else if (stack.is(ItemsRegistrar.GENDER_QUEER_MOTH_JAR)) {
+            variant = MothVariation.GENDER_QUEER;
+        } else if (stack.is(ItemsRegistrar.GENDERFAE_MOTH_JAR)) {
+            variant = MothVariation.GENDERFAE;
+        } else if (stack.is(ItemsRegistrar.GENDERFAUN_MOTH_JAR)) {
+            variant = MothVariation.GENDERFAUN;
+        } else if (stack.is(ItemsRegistrar.BIGENDER_MOTH_JAR)) {
+            variant = MothVariation.BIGENDER;
+        } else if (stack.is(ItemsRegistrar.PANGENDER_MOTH_JAR)) {
+            variant = MothVariation.PANGENDER;
         } else if (stack.is(ItemsRegistrar.ALLY_MOTH_JAR.get())) {
             variant = MothVariation.ALLY;
         }
@@ -87,7 +104,7 @@ public class GlassJarItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         MothVariation variation = getMothVariant(context.getItemInHand().getItem());
-        if (variation != null && context.getPlayer() != null && context.getPlayer().isCrouching()) {
+        if (variation != null && context.getPlayer() != null && context.getPlayer().isDiscrete()) {
             MothEntity moth = new MothEntity(EntityTypeRegistrar.MOTH.get(), context.getLevel());
 
             BlockHitResult blockHitResult = BucketItem.getPlayerPOVHitResult(context.getLevel(), context.getPlayer(), ClipContext.Fluid.SOURCE_ONLY);
@@ -112,6 +129,12 @@ public class GlassJarItem extends Item {
 
             return InteractionResult.SUCCESS;
         }
+
+//        if (variation != null) {
+//            PrideMothsMod.LOGGER.info("[Happy Pride Moth!] Attempted to place MothVariation.{}", variation);
+//        } else {
+//            PrideMothsMod.LOGGER.info("[Happy Pride Moth!] Failed to place MothVariation.NULL");
+//        }
 
         return super.useOn(context);
     }

@@ -16,7 +16,7 @@ public class EntityTypeRegistrar {
     public static DeferredHolder<EntityType<?>, EntityType<MothEntity>> MOTH =
             ENTITY_TYPES.register("moth",
                     () -> EntityType.Builder.of(MothEntity::new, MobCategory.CREATURE)
-                            .sized(0.3f, 0.3f)
+                            .sized(0.45f, 0.45f)
                             .build(ResourceLocation.fromNamespaceAndPath(PrideMothsMod.MOD_ID, "moth").toString()));
 
     public static void yep(IEventBus bus) {
