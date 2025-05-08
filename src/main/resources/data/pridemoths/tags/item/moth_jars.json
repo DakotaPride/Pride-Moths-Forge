@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "pridemoths:moth_jar",
+    "pridemoths:rare_moth_jar",
     "pridemoths:agender_moth_jar",
     "pridemoths:ally_moth_jar",
     "pridemoths:aroace_moth_jar",
@@ -22,6 +23,13 @@
     "pridemoths:polyamorous_moth_jar",
     "pridemoths:polysexual_moth_jar",
     "pridemoths:transgender_moth_jar",
-    "pridemoths:rare_moth_jar"
+    "pridemoths:genderfluid_moth_jar",
+    "pridemoths:intersex_moth_jar",
+    "pridemoths:xenogender_moth_jar",
+    "pridemoths:gender_queer_moth_jar",
+    "pridemoths:genderfae_moth_jar",
+    "pridemoths:genderfaun_moth_jar",
+    "pridemoths:bigender_moth_jar",
+    "pridemoths:pangender_moth_jar"
   ]
 }

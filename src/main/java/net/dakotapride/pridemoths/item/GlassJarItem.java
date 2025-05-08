@@ -78,6 +78,22 @@ public class GlassJarItem extends Item {
             variant = MothVariation.POLYSEXUAL;
         } else if (stack.is(ItemsRegistrar.TRANSGENDER_MOTH_JAR.get())) {
             variant = MothVariation.TRANSGENDER;
+        } else if (stack.is(ItemsRegistrar.GENDERFLUID_MOTH_JAR)) {
+            variant = MothVariation.GENDERFLUID;
+        } else if (stack.is(ItemsRegistrar.INTERSEX_MOTH_JAR)) {
+            variant = MothVariation.INTERSEX;
+        } else if (stack.is(ItemsRegistrar.XENOGENDER_MOTH_JAR)) {
+            variant = MothVariation.XENOGENDER;
+        } else if (stack.is(ItemsRegistrar.GENDER_QUEER_MOTH_JAR)) {
+            variant = MothVariation.GENDER_QUEER;
+        } else if (stack.is(ItemsRegistrar.GENDERFAE_MOTH_JAR)) {
+            variant = MothVariation.GENDERFAE;
+        } else if (stack.is(ItemsRegistrar.GENDERFAUN_MOTH_JAR)) {
+            variant = MothVariation.GENDERFAUN;
+        } else if (stack.is(ItemsRegistrar.BIGENDER_MOTH_JAR)) {
+            variant = MothVariation.BIGENDER;
+        } else if (stack.is(ItemsRegistrar.PANGENDER_MOTH_JAR)) {
+            variant = MothVariation.PANGENDER;
         } else if (stack.is(ItemsRegistrar.ALLY_MOTH_JAR.get())) {
             variant = MothVariation.ALLY;
         }
