@@ -17,11 +17,13 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GlassJarItem extends Item {
     public GlassJarItem(boolean i, Properties settings) {
@@ -114,7 +116,7 @@ public class GlassJarItem extends Item {
 
             moth.setPos(blockPos2.getX() + .5f, blockPos2.getY(), blockPos2.getZ() + .5f);
             moth.setMothVariant(variation);
-            moth.fromJar = true;
+            moth.setFromGlassJar(true);
 
             if (this.getDefaultInstance().get(DataComponents.CUSTOM_NAME) != null) {
                 moth.setCustomName(context.getItemInHand().getHoverName());
@@ -134,11 +136,11 @@ public class GlassJarItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("text.pridemoths.jar.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+        tooltip.accept(Component.translatable("text.pridemoths.jar.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
 
         if (!stack.is(ItemsRegistrar.GLASS_JAR.get())) {
-            tooltip.add(Component.translatable("text.pridemoths.jar." + getMothVariant(stack.getItem()).getVariation()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("text.pridemoths.jar." + getMothVariant(stack.getItem()).getVariation()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
         }
     }
 }

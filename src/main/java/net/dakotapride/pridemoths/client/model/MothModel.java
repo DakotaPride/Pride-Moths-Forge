@@ -4,44 +4,52 @@ import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public class MothModel extends GeoModel<MothEntity> {
 
-    @Override
-    public ResourceLocation getModelResource(MothEntity entity, @Nullable GeoRenderer<MothEntity> renderer) {
-        if (entity.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "geo/baby_moth.geo.json");
-        }
+    MothVariation variation;
+    boolean baby;
 
-        return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "geo/moth.geo.json");
+    @Override
+    public void addAdditionalStateData(MothEntity animatable, GeoRenderState renderState) {
+        super.addAdditionalStateData(animatable, renderState);
+        variation = animatable.getMothVariant();
+        baby = animatable.isBaby();
     }
 
     @Override
-    public ResourceLocation getTextureResource(MothEntity entity, @Nullable GeoRenderer<MothEntity> renderer) {
-        if (entity.isBaby()) {
-            if (entity.getMothVariant() == MothVariation.RARE) {
+    public ResourceLocation getModelResource(GeoRenderState renderState) {
+        if (baby)
+            return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "baby_moth");
+        return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "moth");
+    }
+
+    @Override
+    public ResourceLocation getTextureResource(GeoRenderState renderState) {
+        if (baby) {
+            if (variation == MothVariation.RARE) {
                 return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/baby/rare.png");
             } else {
                 return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/baby/moth.png");
             }
         }
 
-        if (entity.getMothVariant() == MothVariation.RARE && !entity.isBaby()) {
+        if (variation == MothVariation.RARE) {
             return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/rare.png");
         } else {
             return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/moth.png");
         }
+        //return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/moth.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(MothEntity entity) {
         if (entity.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "animations/baby_moth.animation.json");
+            return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "baby_moth");
         }
 
-        return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "animations/moth.animation.json");
+        return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "moth");
     }
 }

@@ -23,11 +23,11 @@ import java.util.function.Supplier;
 public class BlocksRegistrar {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(PrideMothsMod.ID);
 
-    public static final DeferredBlock<Block> FUZZY_CARPET = registerBlockWithItem("fuzzy_carpet",
-            FuzzyCarpetBlock::new, () -> BlockBehaviour.Properties.of().sound(SoundType.WOOL).mapColor(MapColor.TERRACOTTA_WHITE)
+    public static final DeferredBlock<Block> FUZZY_CARPET = fuzzyCarpet(FuzzyCarpetBlock::new,
+            () -> BlockBehaviour.Properties.of().sound(SoundType.WOOL).mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(0.1F).pushReaction(PushReaction.DESTROY));
-    public static final DeferredBlock<Block> MOTH_ENCLOSURE = registerBlockWithItem("moth_enclosure",
-            MothEnclosureBlock::new, () -> BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK));
+    public static final DeferredBlock<Block> MOTH_ENCLOSURE = mothEnclosure(MothEnclosureBlock::new,
+            () -> BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK));
     //public static DeferredItem<BlockItem> FUZZY_CARPET_ITEM = ITEMS.registerSimpleBlockItem("fuzzy_carpet", FUZZY_CARPET);
 
     public static <T extends Block> DeferredBlock<T> registerBlockWithItem(String name,
@@ -38,6 +38,28 @@ public class BlocksRegistrar {
         ItemsRegistrar.register(
                 name,
                 itemProps -> new BlockItem(toReturn.get(), itemProps),
+                () -> new Item.Properties().useBlockDescriptionPrefix());
+        return toReturn;
+    }
+
+    public static <T extends Block> DeferredBlock<T> fuzzyCarpet(Function<BlockBehaviour.Properties, T> block,
+                                                                           Supplier<BlockBehaviour.Properties> properties) {
+        DeferredBlock<T> toReturn = BLOCKS.register("fuzzy_carpet", () -> block.apply(properties.get().setId(ResourceKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "fuzzy_carpet")))));
+        ItemsRegistrar.register(
+                "fuzzy_carpet",
+                itemProps -> new FuzzyCarpetBlock.FuzzyCarpetBlockItem(toReturn.get(), itemProps),
+                () -> new Item.Properties().useBlockDescriptionPrefix());
+        return toReturn;
+    }
+
+    public static <T extends Block> DeferredBlock<T> mothEnclosure(Function<BlockBehaviour.Properties, T> block,
+                                                                           Supplier<BlockBehaviour.Properties> properties) {
+        DeferredBlock<T> toReturn = BLOCKS.register("moth_enclosure", () -> block.apply(properties.get().setId(ResourceKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "moth_enclosure")))));
+        ItemsRegistrar.register(
+                "moth_enclosure",
+                itemProps -> new MothEnclosureBlock.MothEnclosureBlockItem(toReturn.get(), itemProps),
                 () -> new Item.Properties().useBlockDescriptionPrefix());
         return toReturn;
     }

@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.item.GlassJarItem;
 import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
+import net.dakotapride.pridemoths.register.DataComponentsRegistrar;
 import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -45,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.function.Consumer;
 
 public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     public static final MapCodec<MothEnclosureBlock> CODEC = simpleCodec(MothEnclosureBlock::new);
@@ -65,6 +68,22 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
         }
 
         this.registerDefaultState(blockState);
+    }
+
+    public static class MothEnclosureBlockItem extends BlockItem {
+        public MothEnclosureBlockItem(Block block, Properties settings) {
+            super(block, settings.setId(PrideMothsMod.keyOfItem("moth_enclosure")).overrideDescription("block.pridemoths.moth_enclosure"));
+        }
+
+        @Override
+        public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> textConsumer, TooltipFlag flag) {
+            for (ItemStack stack : itemStack.getOrDefault(DataComponentsRegistrar.MOTH_CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
+                if (stack.is(PrideMothsMod.MOTH_JARS) && stack.getItem() instanceof GlassJarItem jarItem) {
+                    textConsumer.accept(Component.translatable("container.mothEnclosure.itemCount." +
+                            GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                }
+            }
+        }
     }
 
     @Override
@@ -339,17 +358,6 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-
-        for (ItemStack itemStack : stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
-            if (itemStack.is(PrideMothsMod.MOTH_JARS) && itemStack.getItem() instanceof GlassJarItem jarItem) {
-                tooltip.add(Component.translatable("container.mothEnclosure.itemCount." + GlassJarItem.getMothVariant(jarItem).getVariation()).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            }
-        }
-    }
-
-    @Override
     public MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
@@ -376,11 +384,11 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
         SLOT_OCCUPIED_PROPERTIES.forEach(builder::add);
     }
 
-    @Override
-    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        world.updateNeighbourForOutputSignal(pos, this);
-        super.onRemove(state, world, pos, newState, moved);
-    }
+//    @Override
+//    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+//        world.updateNeighbourForOutputSignal(pos, this);
+//        super.onRemove(state, world, pos, newState, moved);
+//    }
 
     @Override
     public BlockState rotate(BlockState state, Rotation rotation) {

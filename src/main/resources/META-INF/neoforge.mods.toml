@@ -97,7 +97,7 @@ side="BOTH"
 modId="geckolib" #mandatory
 type="required" #mandatory
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-versionRange="[4.0,)" #mandatory
+versionRange="[5.0,)" #mandatory
 ordering="NONE"
 side="BOTH"
 

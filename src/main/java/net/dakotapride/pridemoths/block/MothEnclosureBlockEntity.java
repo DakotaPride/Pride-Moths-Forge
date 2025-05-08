@@ -2,12 +2,15 @@ package net.dakotapride.pridemoths.block;
 
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
+import net.dakotapride.pridemoths.register.DataComponentsRegistrar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -66,15 +69,30 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
 
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        //super.loadAdditional(nbt, registryLookup);
+        //this.inventory.clear();
+//        this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+//        if (nbt.contains("Items", Tag.TAG_LIST)) {
+//            ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
+//        }
+//        this.lastInteractedSlot = nbt.getInt("last_interacted_slot");
+//        if (nbt.contains("CustomName", Tag.TAG_STRING)) {
+//            this.customName = parseCustomNameSafe(nbt.getString("CustomName"), registryLookup);
+//        }
+
+
+
         super.loadAdditional(nbt, registryLookup);
         //this.inventory.clear();
         this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        if (nbt.contains("Items", Tag.TAG_LIST)) {
+        if (!this.getInventory().isEmpty()) {
             ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
         }
-        this.lastInteractedSlot = nbt.getInt("last_interacted_slot");
-        if (nbt.contains("CustomName", Tag.TAG_STRING)) {
-            this.customName = parseCustomNameSafe(nbt.getString("CustomName"), registryLookup);
+
+        this.lastInteractedSlot = nbt.getIntOr("last_interacted_slot", -1);
+        if (nbt.contains("CustomName")) {
+            //this.customName = tryParseCustomName(nbt.getString("CustomName"), registryLookup);
+            this.customName = parseCustomNameSafe(nbt.get("CustomName"), registryLookup);
         }
     }
 
@@ -166,17 +184,17 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput components) {
+    protected void applyImplicitComponents(DataComponentGetter components) {
         super.applyImplicitComponents(components);
         this.customName = components.get(DataComponents.CUSTOM_NAME);
-        components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(this.inventory);
+        components.getOrDefault(DataComponentsRegistrar.MOTH_CONTAINER, ItemContainerContents.EMPTY).copyInto(this.inventory);
     }
 
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
         super.collectImplicitComponents(componentMapBuilder);
         componentMapBuilder.set(DataComponents.CUSTOM_NAME, this.customName);
-        componentMapBuilder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.inventory));
+        componentMapBuilder.set(DataComponentsRegistrar.MOTH_CONTAINER, ItemContainerContents.fromItems(this.inventory));
     }
 
     @Override

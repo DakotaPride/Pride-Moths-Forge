@@ -25,7 +25,10 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
@@ -46,9 +49,12 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
@@ -56,9 +62,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrideMoths {
-    private static final EntityDataAccessor<String> VARIANT = SynchedEntityData.defineId(MothEntity.class, EntityDataSerializers.STRING);
-    private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
-    public boolean fromJar = false;
+    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(MothEntity.class, EntityDataSerializers.INT);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    //public boolean fromJar = false;
+    private static final EntityDataAccessor<Boolean> FROM_JAR = SynchedEntityData.defineId(MothEntity.class, EntityDataSerializers.BOOLEAN);
     public static final List<MothVariation> PRIDE_VARIATIONS = List.of(
             MothVariation.TRANSGENDER, MothVariation.LGBT, MothVariation.NON_BINARY, MothVariation.AGENDER, MothVariation.ASEXUAL,
             MothVariation.GAY, MothVariation.LESBIAN, MothVariation.BISEXUAL, MothVariation.PANSEXUAL, MothVariation.POLYAMOROUS,
@@ -321,40 +328,51 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     public void setMothVariant(MothVariation type) {
-        this.entityData.set(VARIANT, type.toString());
+        this.entityData.set(VARIANT, type.getIndex());
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
 
-        builder.define(VARIANT, MothVariation.DEFAULT.toString());
+        builder.define(VARIANT, MothVariation.DEFAULT.getIndex());
+        builder.define(FROM_JAR, false);
+    }
+
+    public boolean isFromGlassJar() {
+        return this.entityData.get(FROM_JAR);
+    }
+
+    public void setFromGlassJar(boolean b) {
+        this.entityData.set(FROM_JAR, b);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
 
-        this.fromJar = tag.getBoolean("FromGlassJar");
-        if (tag.contains("MothVariant")) {
-            this.setMothVariant(MothVariation.valueOf(tag.getString("MothVariant")));
-        }
+//        this.fromJar = tag.getBoolean("FromGlassJar");
+//        if (tag.contains("MothVariant")) {
+//            this.setMothVariant(MothVariation.valueOf(tag.getString("MothVariant")));
+//        }
+        this.setFromGlassJar(tag.getBooleanOr("FromGlassJar", false));
+        this.setMothVariant(tag.read("MothVariant", MothVariation.INDEX_CODEC).orElse(MothVariation.DEFAULT));
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
 
-        tag.putBoolean("FromGlassJar", fromJar);
-        tag.putString("MothVariant", this.getMothVariant().toString());
+        tag.putBoolean("FromGlassJar", this.isFromGlassJar());
+        tag.store("MothVariant", MothVariation.INDEX_CODEC, this.getMothVariant());
     }
 
     public MothVariation getMothVariant() {
-        return MothVariation.valueOf(this.entityData.get(VARIANT));
+        return MothVariation.byIndex(this.entityData.get(VARIANT));
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -476,12 +494,13 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controller) {
-        controller.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controller) {
+        //controller.add(new AnimationController<>(this, "controller", 0, this::predicate));
+        controller.add(new AnimationController<>("controller", 0, this::animController));
     }
 
-    private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
-        event.getController().setAnimation(RawAnimation.begin().then("animation.moth.idle", Animation.LoopType.LOOP));
+    protected PlayState animController(final AnimationTest<GeoAnimatable> animTest) {
+        animTest.setAndContinue(RawAnimation.begin().thenLoop("animation.moth.idle"));
 
         return PlayState.CONTINUE;
     }

@@ -7,10 +7,7 @@ import net.dakotapride.pridemoths.client.renderer.MothRenderer;
 import net.dakotapride.pridemoths.config.PrideMothsCommonConfig;
 import net.dakotapride.pridemoths.item.FruitfulStewFoodItem;
 import net.dakotapride.pridemoths.item.GlassJarItem;
-import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
-import net.dakotapride.pridemoths.register.BlocksRegistrar;
-import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
-import net.dakotapride.pridemoths.register.ItemsRegistrar;
+import net.dakotapride.pridemoths.register.*;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -61,6 +58,10 @@ public class PrideMothsMod {
 
     public static final IntegerProperty FUZZ_LEVEL = IntegerProperty.create("fuzz_level", 0, 3);
 
+    public static ResourceKey<Item> keyOfItem(String name) {
+        return ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(ID, name));
+    }
+
     public PrideMothsMod(IEventBus bus, ModContainer modContainer) {
 
         bus.addListener(this::commonSetup);
@@ -69,7 +70,7 @@ public class PrideMothsMod {
         BlocksRegistrar.yep(bus);
         BlockEntityTypeRegistrar.yep(bus);
         EntityTypeRegistrar.yep(bus);
-        //DataComponentsRegistrar.yep();
+        DataComponentsRegistrar.yep(bus);
 
         // GeckoLib.initialize();
 
