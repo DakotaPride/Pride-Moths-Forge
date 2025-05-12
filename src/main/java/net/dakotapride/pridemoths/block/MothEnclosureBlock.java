@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -351,6 +352,11 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(state, world, pos);
+    }
+
+    @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         ItemStack itemStack = super.getCloneItemStack(level, pos, state, includeData, player);
         level.getBlockEntity(pos, BlockEntityTypeRegistrar.MOTH_ENCLOSURE.get()).ifPresent(blockEntity -> blockEntity.applyComponentsFromItemStack(itemStack));
@@ -383,12 +389,6 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
         builder.add(FACING, FUZZ_LEVEL);
         SLOT_OCCUPIED_PROPERTIES.forEach(builder::add);
     }
-
-//    @Override
-//    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-//        world.updateNeighbourForOutputSignal(pos, this);
-//        super.onRemove(state, world, pos, newState, moved);
-//    }
 
     @Override
     public BlockState rotate(BlockState state, Rotation rotation) {

@@ -184,6 +184,9 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     }
 
     @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {}
+
+    @Override
     protected void applyImplicitComponents(DataComponentGetter components) {
         super.applyImplicitComponents(components);
         this.customName = components.get(DataComponents.CUSTOM_NAME);

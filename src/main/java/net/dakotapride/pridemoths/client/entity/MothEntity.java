@@ -176,10 +176,8 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
 
     }
 
-    @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
-        LocalDate date;
-        date = LocalDate.now();
+    public void setFromFinalizeSpawn() {
+        LocalDate date = LocalDate.now();
         int getLocalMonthFromUser = date.get(ChronoField.MONTH_OF_YEAR);
 
         if (IPrideMoths.isAgenderDayOfVisibility()) {
@@ -218,13 +216,18 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
             setMothVariant(getDemigenderVariation(random));
         }
 
-        else if (getLocalMonthFromUser == 6 || PrideMothsCommonConfig.pride_moths_outside_of_pride_moth) {
+        else if (getLocalMonthFromUser == 6 || PrideMothsCommonConfig.GENERATE_PRIDE_VARIANTS_OUTSIDE_OF_PRIDE_MONTH.get()) {
             setMothVariant(getPrideVariation(random));
         }
 
         else {
             setMothVariant(getOtherVariation(random));
         }
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+        setFromFinalizeSpawn();
 
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
