@@ -204,7 +204,7 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
 
     @Override
     public Component getDisplayName() {
-        return this.getName();
+        return Component.literal("Moth Enclosure");
     }
 
     @Nullable
