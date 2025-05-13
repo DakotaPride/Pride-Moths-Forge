@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "F": {
+      "item": "pridemoths:moth_fuzz"
+    }
+  },
+  "pattern": [
+    "FF",
+    "FF"
+  ],
+  "results": [
+    {
+      "id": "estrogen:moth_wool"
+    }
+  ]
+}

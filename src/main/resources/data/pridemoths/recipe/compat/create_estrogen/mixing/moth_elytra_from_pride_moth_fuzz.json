@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "create:deploying",
+  "ingredients": [
+    {
+      "item": "minecraft:elytra"
+    },
+    {
+      "item": "pridemoths:moth_fuzz"
+    }
+  ],
+  "results": [
+    {
+      "id": "estrogen:moth_elytra"
+    }
+  ]
+}
