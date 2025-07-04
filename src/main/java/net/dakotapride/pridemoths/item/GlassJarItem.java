@@ -118,7 +118,7 @@ public class GlassJarItem extends Item {
             moth.setMothVariant(variation);
             moth.setFromGlassJar(true);
 
-            if (this.getDefaultInstance().get(DataComponents.CUSTOM_NAME) != null) {
+            if (context.getItemInHand().getComponents().has(DataComponents.CUSTOM_NAME)) {
                 moth.setCustomName(context.getItemInHand().getHoverName());
             }
 
