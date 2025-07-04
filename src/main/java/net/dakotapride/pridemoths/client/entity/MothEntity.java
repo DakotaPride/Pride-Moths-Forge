@@ -250,8 +250,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         if (player.getItemInHand(hand).getItem() == ItemsRegistrar.GLASS_JAR.get() && !this.isBaby()) {
             ItemStack itemStack = getMothJarItemFromVariation();
             if (this.hasCustomName()) {
-                this.setCustomName(itemStack.get(DataComponents.CUSTOM_NAME));
-                // itemStack.setName(this.getCustomName());
+                itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
             }
 
             if (!player.getAbilities().instabuild) {
