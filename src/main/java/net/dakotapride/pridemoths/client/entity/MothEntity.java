@@ -8,6 +8,7 @@ import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
 import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -42,8 +43,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -350,20 +349,25 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         this.entityData.set(FROM_JAR, b);
     }
 
-    @Override
-    protected void readAdditionalSaveData(ValueInput valueInput) {
-        super.readAdditionalSaveData(valueInput);
 
-        this.setFromGlassJar(valueInput.getBooleanOr("FromGlassJar", false));
-        this.setMothVariant(valueInput.read("MothVariant", MothVariation.INDEX_CODEC).orElse(MothVariation.DEFAULT));
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+
+//        this.fromJar = tag.getBoolean("FromGlassJar");
+//        if (tag.contains("MothVariant")) {
+//            this.setMothVariant(MothVariation.valueOf(tag.getString("MothVariant")));
+//        }
+        this.setFromGlassJar(tag.getBooleanOr("FromGlassJar", false));
+        this.setMothVariant(tag.read("MothVariant", MothVariation.INDEX_CODEC).orElse(MothVariation.DEFAULT));
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput valueOutput) {
-        super.addAdditionalSaveData(valueOutput);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
 
-        valueOutput.putBoolean("FromGlassJar", this.isFromGlassJar());
-        valueOutput.store("MothVariant", MothVariation.INDEX_CODEC, this.getMothVariant());
+        tag.putBoolean("FromGlassJar", this.isFromGlassJar());
+        tag.store("MothVariant", MothVariation.INDEX_CODEC, this.getMothVariant());
     }
 
     public MothVariation getMothVariant() {

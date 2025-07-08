@@ -23,7 +23,7 @@ license="MIT"
 modId="pridemoths" #mandatory
 
 # The version number of the mod
-version="1.9.3" #mandatory
+version="1.9.4" #mandatory
 
 # A display name for the mod
 displayName="Happy Pride Moth!" #mandatory
@@ -76,7 +76,7 @@ type="required" #mandatory
 # Optional field describing why the dependency is required or why it is incompatible
 # reason="..."
 # The version range of the dependency
-versionRange="[21.6.20-beta,)" #mandatory
+versionRange="${neo_version_range}" #mandatory
 # An ordering relationship for the dependency.
 # BEFORE - This mod is loaded BEFORE the dependency
 # AFTER - This mod is loaded AFTER the dependency
@@ -89,7 +89,7 @@ side="BOTH"
 modId="minecraft"
 type="required"
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-versionRange="[1.21.6,)"
+versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
 

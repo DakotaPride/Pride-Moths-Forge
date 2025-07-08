@@ -7,7 +7,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber(modid = PrideMothsMod.ID, value = Dist.DEDICATED_SERVER)
+@EventBusSubscriber(modid = PrideMothsMod.ID, bus = EventBusSubscriber.Bus.MOD)
 public class PrideMothsCommonConfig {
 
     PrideMothsCommonConfig(ModConfigSpec.Builder builder) {
