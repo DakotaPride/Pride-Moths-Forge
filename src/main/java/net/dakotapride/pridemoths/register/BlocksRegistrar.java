@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -27,7 +28,7 @@ public class BlocksRegistrar {
             () -> BlockBehaviour.Properties.of().sound(SoundType.WOOL).mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(0.1F).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<Block> MOTH_ENCLOSURE = mothEnclosure(MothEnclosureBlock::new,
-            () -> BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK));
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.BEEHIVE).mapColor(MapColor.COLOR_PINK));
     //public static DeferredItem<BlockItem> FUZZY_CARPET_ITEM = ITEMS.registerSimpleBlockItem("fuzzy_carpet", FUZZY_CARPET);
 
     public static <T extends Block> DeferredBlock<T> registerBlockWithItem(String name,
