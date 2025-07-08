@@ -4,15 +4,12 @@ import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.register.BlockEntityTypeRegistrar;
 import net.dakotapride.pridemoths.register.DataComponentsRegistrar;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Nameable;
@@ -24,6 +21,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -68,41 +67,25 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        //super.loadAdditional(nbt, registryLookup);
-        //this.inventory.clear();
-//        this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-//        if (nbt.contains("Items", Tag.TAG_LIST)) {
-//            ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
-//        }
-//        this.lastInteractedSlot = nbt.getInt("last_interacted_slot");
-//        if (nbt.contains("CustomName", Tag.TAG_STRING)) {
-//            this.customName = parseCustomNameSafe(nbt.getString("CustomName"), registryLookup);
-//        }
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
 
-
-
-        super.loadAdditional(nbt, registryLookup);
-        //this.inventory.clear();
         this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (!this.getInventory().isEmpty()) {
-            ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
+            ContainerHelper.loadAllItems(valueInput, this.inventory);
         }
 
-        this.lastInteractedSlot = nbt.getIntOr("last_interacted_slot", -1);
-        if (nbt.contains("CustomName")) {
-            //this.customName = tryParseCustomName(nbt.getString("CustomName"), registryLookup);
-            this.customName = parseCustomNameSafe(nbt.get("CustomName"), registryLookup);
-        }
+        this.lastInteractedSlot = valueInput.getIntOr("last_interacted_slot", -1);
+        this.customName = parseCustomNameSafe(valueInput, "CustomName");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        ContainerHelper.saveAllItems(nbt, this.inventory, false, registryLookup);
-        nbt.putInt("last_interacted_slot", this.lastInteractedSlot);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        ContainerHelper.saveAllItems(valueOutput, this.inventory, false);
+        valueOutput.putInt("last_interacted_slot", this.lastInteractedSlot);
         if (this.hasCustomName()) {
-            nbt.putString("CustomName", Component.Serializer.toJson(this.customName, registryLookup));
+            valueOutput.storeNullable("CustomName", ComponentSerialization.CODEC, this.customName);
         }
     }
 
@@ -201,9 +184,9 @@ public class MothEnclosureBlockEntity extends BlockEntity implements Container, 
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag nbt) {
-        nbt.remove("CustomName");
-        nbt.remove("Items");
+    public void removeComponentsFromTag(ValueOutput valueOutput) {
+        valueOutput.discard("CustomName");
+        valueOutput.discard("Items");
     }
 
 //    @Nullable

@@ -8,7 +8,6 @@ import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
 import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -43,6 +42,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,9 +136,9 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     public static MothVariation getOtherVariation(RandomSource random) {
-        int rarePatternChance = PrideMothsCommonConfig.base_rare_chance;
+        int rarePatternChance = PrideMothsCommonConfig.BASE_RARE_CHANCE.getAsInt();
         if (IPrideMoths.isWorldMothWeek()) {
-            rarePatternChance = PrideMothsCommonConfig.moth_week_rare_chance;
+            rarePatternChance = PrideMothsCommonConfig.BASE_RARE_CHANCE_MOTH_WEEK.getAsInt();
         }
 
         if (random.nextInt(rarePatternChance) == 1) {
@@ -350,23 +351,19 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
 
-//        this.fromJar = tag.getBoolean("FromGlassJar");
-//        if (tag.contains("MothVariant")) {
-//            this.setMothVariant(MothVariation.valueOf(tag.getString("MothVariant")));
-//        }
-        this.setFromGlassJar(tag.getBooleanOr("FromGlassJar", false));
-        this.setMothVariant(tag.read("MothVariant", MothVariation.INDEX_CODEC).orElse(MothVariation.DEFAULT));
+        this.setFromGlassJar(valueInput.getBooleanOr("FromGlassJar", false));
+        this.setMothVariant(valueInput.read("MothVariant", MothVariation.INDEX_CODEC).orElse(MothVariation.DEFAULT));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
 
-        tag.putBoolean("FromGlassJar", this.isFromGlassJar());
-        tag.store("MothVariant", MothVariation.INDEX_CODEC, this.getMothVariant());
+        valueOutput.putBoolean("FromGlassJar", this.isFromGlassJar());
+        valueOutput.store("MothVariant", MothVariation.INDEX_CODEC, this.getMothVariant());
     }
 
     public MothVariation getMothVariant() {

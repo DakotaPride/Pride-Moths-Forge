@@ -146,7 +146,7 @@ public class PrideMothsMod {
         }
     }
 
-    @EventBusSubscriber(modid = ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = ID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
@@ -154,7 +154,7 @@ public class PrideMothsMod {
         }
     }
 
-    @EventBusSubscriber(modid = ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = ID)
     public static class ModEventBusEvents {
         @SubscribeEvent
         public static void entityAttributeEvent(EntityAttributeCreationEvent event) {

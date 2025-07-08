@@ -1,12 +1,13 @@
 package net.dakotapride.pridemoths.config;
 
 import net.dakotapride.pridemoths.PrideMothsMod;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber(modid = PrideMothsMod.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = PrideMothsMod.ID, value = Dist.DEDICATED_SERVER)
 public class PrideMothsCommonConfig {
 
     PrideMothsCommonConfig(ModConfigSpec.Builder builder) {
