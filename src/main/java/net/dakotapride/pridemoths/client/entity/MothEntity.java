@@ -4,6 +4,7 @@ import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.pride.IPrideMoths;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.dakotapride.pridemoths.config.PrideMothsCommonConfig;
+import net.dakotapride.pridemoths.register.DataComponentsRegistrar;
 import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
 import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.core.BlockPos;
@@ -47,24 +48,17 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.EnumSet;
 import java.util.List;
 
-public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrideMoths {
+public class MothEntity extends Animal implements FlyingAnimal, IPrideMoths {
+    public final AnimationState idleAnimationState = new AnimationState();
+    private int idleAnimationTimeout = 0;
+
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(MothEntity.class, EntityDataSerializers.INT);
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     //public boolean fromJar = false;
     private static final EntityDataAccessor<Boolean> FROM_JAR = SynchedEntityData.defineId(MothEntity.class, EntityDataSerializers.BOOLEAN);
     public static final List<MothVariation> PRIDE_VARIATIONS = List.of(
@@ -239,7 +233,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         if (isFood(itemstack)) {
             if (isFavouredFoodItem(itemstack)) {
                 int i = this.getAge();
-                if (!this.level().isClientSide && i == 0 && this.canFallInLove()) {
+                if (!this.level().isClientSide() && i == 0 && this.canFallInLove()) {
                     this.usePlayerItem(player, hand, itemstack);
                     this.setInLove(player);
                     return InteractionResult.SUCCESS_SERVER;
@@ -251,17 +245,22 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
                     return InteractionResult.SUCCESS;
                 }
 
-                if (this.level().isClientSide) {
+                if (this.level().isClientSide()) {
                     return InteractionResult.CONSUME;
                 }
 
             }
         }
 
-        if (player.getItemInHand(hand).getItem() == ItemsRegistrar.GLASS_JAR.get() && !this.isBaby()) {
+        if (player.getItemInHand(hand).getItem() == ItemsRegistrar.GLASS_JAR.get()) {
             ItemStack itemStack = getMothJarItemFromVariation();
             if (this.hasCustomName()) {
                 itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
+            }
+
+            if (this.isBaby()) {
+                itemStack.set(DataComponentsRegistrar.CONTAINS_BABY, this.isBaby());
+                itemStack.set(DataComponentsRegistrar.SAVED_AGE, this.age);
             }
 
             if (!player.getAbilities().instabuild) {
@@ -397,11 +396,24 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
         return name.equalsIgnoreCase(i0) || name.equalsIgnoreCase(i1);
     }
 
+    private void setupAnimationStates() {
+        if(this.idleAnimationTimeout <= 0) {
+            this.idleAnimationTimeout = 80;
+            this.idleAnimationState.start(this.tickCount);
+        } else {
+            --this.idleAnimationTimeout;
+        }
+    }
+
     @Override
     public void tick() {
         super.tick();
 
-        if (this.hasCustomName() && !this.isBaby()) {
+        if(this.level().isClientSide()) {
+            this.setupAnimationStates();
+        }
+
+        if (this.hasCustomName()) {
             if (this.getMothVariant() != MothVariation.NON_BINARY && nonBinaryNames()) {
                 this.setMothVariant(MothVariation.NON_BINARY);
             } else if (this.getMothVariant() != MothVariation.TRANSGENDER && twoNames("trans", "transgender")) {
@@ -489,20 +501,7 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
     }
 
     @Override
-    protected void checkFallDamage(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controller) {
-        //controller.add(new AnimationController<>(this, "controller", 0, this::predicate));
-        controller.add(new AnimationController<>("controller", 0, this::animController));
-    }
-
-    protected PlayState animController(final AnimationTest<GeoAnimatable> animTest) {
-        animTest.setAndContinue(RawAnimation.begin().thenLoop("animation.moth.idle"));
-
-        return PlayState.CONTINUE;
-    }
+    protected void checkFallDamage(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {}
 
     @Nullable
     @Override
@@ -518,11 +517,6 @@ public class MothEntity extends Animal implements GeoEntity, FlyingAnimal, IPrid
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
     }
 
     // Fake target

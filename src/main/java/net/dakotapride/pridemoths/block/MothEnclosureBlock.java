@@ -55,9 +55,9 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty FUZZ_LEVEL = PrideMothsMod.FUZZ_LEVEL;
     public static final List<BooleanProperty> SLOT_OCCUPIED_PROPERTIES = List.of(
-            BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED,
-            BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED,
-            BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED
+            BlockStateProperties.SLOT_0_OCCUPIED,
+            BlockStateProperties.SLOT_1_OCCUPIED,
+            BlockStateProperties.SLOT_2_OCCUPIED
     );
 
     public MothEnclosureBlock(Properties settings) {
@@ -138,23 +138,23 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     private static boolean checkIfOnlyOneSlotIsFilled(BlockState state) {
-        if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return true;
-        if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return true;
-        return !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED);
+        return !state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED);
     }
 
     private static boolean checkIfOnlyTwoSlotsAreFilled(BlockState state) {
-        if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return true;
-        if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return true;
-        return state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED);
+        return state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED);
     }
 
     private static boolean checkIfAllSlotsAreFilled(BlockState state) {
-        return state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED);
+        return state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED);
     }
 
     public static void dropMothFuzz(Level world, BlockPos pos, BlockState state) {
@@ -162,39 +162,39 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
             popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
         }
         if (state.getValue(FUZZ_LEVEL) == 2) {
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
-            if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
-            if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
 
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
-            if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
 
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
         }
         if (state.getValue(FUZZ_LEVEL) == 3) {
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
-            if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
-            if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 1));
 
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
-            if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 2));
 
-            if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+            if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
                 popResource(world, pos, new ItemStack(ItemsRegistrar.MOTH_FUZZ.get(), 3));
         }
     }
@@ -213,7 +213,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
                     if (stack.getItem() instanceof ShearsItem) {
                         world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
                         dropMothFuzz(world, pos, state);
-                        stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                        stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
                         bl = true;
                         world.gameEvent(player, GameEvent.SHEAR, pos);
                     }
@@ -299,7 +299,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     private static void tryAddGlassJarWithMothInside(Level world, BlockPos pos, Player player, MothEnclosureBlockEntity blockEntity, ItemStack stack, int slot) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             SoundEvent soundEvent = SoundEvents.BOTTLE_EMPTY;
             blockEntity.setItem(slot, stack.consumeAndReturn(1, player));
@@ -308,7 +308,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     private static void tryRemoveGlassJarWithMothInside(Level world, BlockPos pos, Player player, MothEnclosureBlockEntity blockEntity, int slot) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             ItemStack itemStack = blockEntity.removeItem(slot, 1);
             SoundEvent soundEvent = SoundEvents.BOTTLE_FILL;
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -322,7 +322,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
 
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide && world instanceof ServerLevel serverLevel
+        if (!world.isClientSide() && world instanceof ServerLevel serverLevel
                 //&& player.isCreative()
                 && serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)
                 && world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
@@ -406,28 +406,28 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     public static int getRedstoneAnalogOutput(BlockState state) {
-        if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 1;
-        if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 1;
-        if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 1;
 
-        if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 2;
-        if (!state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (!state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 2;
-        if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && !state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 2;
 
-        if (state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED))
+        if (state.getValue(BlockStateProperties.SLOT_0_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_1_OCCUPIED) && state.getValue(BlockStateProperties.SLOT_2_OCCUPIED))
             return 3;
 
         return 0;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos blockPos, Direction direction) {
         return getRedstoneAnalogOutput(state);
     }
 }

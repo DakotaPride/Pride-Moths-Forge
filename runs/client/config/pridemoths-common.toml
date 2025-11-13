@@ -1,7 +1,7 @@
 ["Configs for Happy Pride Moth!"]
 	#Determines whether or not pride variants for moths spawn naturally outside of Pride Month
 	#Default value: false
-	"Spawn Pride Variants Outside of Pride Month" = false
+	"Spawn Pride Variants Outside of Pride Month" = true
 	#Determines the default value for the rare, golden moth variant
 	#The integer used will be used like this: 1 out of <value> chance
 	#Default value: 240

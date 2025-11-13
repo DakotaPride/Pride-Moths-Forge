@@ -20,7 +20,7 @@ public class ItemsRegistrar {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(PrideMothsMod.ID);
 
     public static DeferredItem<Item> MOTH_SPAWN_EGG = ITEMS.registerItem("moth_spawn_egg",
-            settings -> new SpawnEggItem(EntityTypeRegistrar.MOTH.get(), settings));
+            settings -> new SpawnEggItem(settings.spawnEgg(EntityTypeRegistrar.MOTH.get())));
     public static DeferredItem<Item> MOTH_FUZZ = ITEMS.registerItem("moth_fuzz",
             Item::new);
     public static DeferredItem<Item> FRUITFUL_STEW = ITEMS.registerItem("fruitful_stew",

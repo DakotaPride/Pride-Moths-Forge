@@ -1,31 +1,20 @@
 package net.dakotapride.pridemoths;
 
-import net.dakotapride.pridemoths.block.FuzzyCarpetBlock;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
-import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
+import net.dakotapride.pridemoths.client.model.BabyMothModel;
+import net.dakotapride.pridemoths.client.model.MothModel;
 import net.dakotapride.pridemoths.client.renderer.MothRenderer;
 import net.dakotapride.pridemoths.config.PrideMothsCommonConfig;
-import net.dakotapride.pridemoths.item.FruitfulStewFoodItem;
-import net.dakotapride.pridemoths.item.GlassJarItem;
 import net.dakotapride.pridemoths.register.*;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -35,16 +24,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Function;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(PrideMothsMod.ID)
@@ -159,6 +143,12 @@ public class PrideMothsMod {
         @SubscribeEvent
         public static void entityAttributeEvent(EntityAttributeCreationEvent event) {
             event.put(EntityTypeRegistrar.MOTH.get(), MothEntity.setAttributes().build());
+        }
+
+        @SubscribeEvent
+        public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(MothModel.LAYER_LOCATION, MothModel::createBodyLayer);
+            event.registerLayerDefinition(BabyMothModel.LAYER_LOCATION, BabyMothModel::createBodyLayer);
         }
     }
 }

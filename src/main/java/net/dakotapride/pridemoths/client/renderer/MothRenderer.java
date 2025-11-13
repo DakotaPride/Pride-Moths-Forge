@@ -1,20 +1,23 @@
 package net.dakotapride.pridemoths.client.renderer;
 
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
-import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.dakotapride.pridemoths.client.model.MothModel;
+import net.dakotapride.pridemoths.client.model.MothRenderState;
+import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.minecraft.Util;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.Map;
 
-public class MothRenderer<R extends LivingEntityRenderState & GeoRenderState> extends GeoEntityRenderer<MothEntity, R> {
+public class MothRenderer extends MobRenderer<MothEntity, MothRenderState, MothModel> {
     public static final Map<MothVariation, ResourceLocation> LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(MothVariation.class), (map) -> {
                 map.put(MothVariation.DEFAULT, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/moth.png"));
@@ -50,28 +53,47 @@ public class MothRenderer<R extends LivingEntityRenderState & GeoRenderState> ex
                 map.put(MothVariation.ALLY, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/pride/ally.png"));
             });
 
-    public MothRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new MothModel());
-    }
-
-    MothVariation variation;
-    boolean baby;
-
-    @Override
-    public void addRenderData(MothEntity animatable, Void relatedObject, R renderState) {
-        super.addRenderData(animatable, relatedObject, renderState);
-        variation = animatable.getMothVariant();
-        baby = animatable.isBaby();
+    public MothRenderer(EntityRendererProvider.Context context) {
+        super(context, new MothModel(context.bakeLayer(MothModel.LAYER_LOCATION)), 0.25f);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(R renderState) {
-        if (baby) {
-            if (variation == MothVariation.RARE)
-                return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/baby/rare.png");
-            return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/baby/moth.png");
+    public ResourceLocation getTextureLocation(MothRenderState entity) {
+        //return LOCATION_BY_VARIANT.get(entity.variant);
+
+//        if (entity.isBaby) {
+//            if (entity.variant == MothVariation.RARE) {
+//                return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/baby/rare.png");
+//            } else {
+//                return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/baby/moth.png");
+//            }
+//        }
+
+        if (entity.variant == MothVariation.RARE) {
+            return ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "textures/model/rare.png");
+        } else return LOCATION_BY_VARIANT.get(entity.variant);
+    }
+
+    @Override
+    public void submit(MothRenderState renderState, PoseStack poseStack, SubmitNodeCollector nodeCollector, CameraRenderState cameraRenderState) {
+        if(renderState.isBaby) {
+            poseStack.scale(0.45f, 0.45f, 0.45f);
+        } else {
+            poseStack.scale(1f, 1f, 1f);
         }
 
-        return LOCATION_BY_VARIANT.get(variation);
+        super.submit(renderState, poseStack, nodeCollector, cameraRenderState);
+    }
+
+    @Override
+    public MothRenderState createRenderState() {
+        return new MothRenderState();
+    }
+
+    @Override
+    public void extractRenderState(MothEntity entity, MothRenderState reusedState, float partialTick) {
+        super.extractRenderState(entity, reusedState, partialTick);
+        reusedState.idleAnimationState.copyFrom(entity.idleAnimationState);
+        reusedState.variant = entity.getMothVariant();
     }
 }

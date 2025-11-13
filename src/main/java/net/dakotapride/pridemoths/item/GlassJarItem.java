@@ -3,6 +3,7 @@ package net.dakotapride.pridemoths.item;
 import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.client.entity.MothEntity;
 import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
+import net.dakotapride.pridemoths.register.DataComponentsRegistrar;
 import net.dakotapride.pridemoths.register.EntityTypeRegistrar;
 import net.dakotapride.pridemoths.register.ItemsRegistrar;
 import net.minecraft.ChatFormatting;
@@ -122,6 +123,12 @@ public class GlassJarItem extends Item {
                 moth.setCustomName(context.getItemInHand().getHoverName());
             }
 
+            if (context.getItemInHand().getComponents().has(DataComponentsRegistrar.CONTAINS_BABY)
+                    && context.getItemInHand().getComponents().has(DataComponentsRegistrar.SAVED_AGE)) {
+                moth.setBaby(true);
+                moth.setAge(context.getItemInHand().getComponents().get(DataComponentsRegistrar.SAVED_AGE));
+            }
+
             context.getLevel().playSound(context.getPlayer(), context.getClickedPos(), SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0f, 1.4f);
             context.getLevel().addFreshEntity(moth);
 
@@ -138,6 +145,12 @@ public class GlassJarItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         tooltip.accept(Component.translatable("text.pridemoths.jar.details").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+
+        tooltip.accept(Component.literal(""));
+
+        if (stack.getComponents().has(DataComponentsRegistrar.CONTAINS_BABY)) {
+            tooltip.accept(Component.translatable("text.pridemoths.jar.has_baby").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+        }
 
         if (!stack.is(ItemsRegistrar.GLASS_JAR.get())) {
             tooltip.accept(Component.translatable("text.pridemoths.jar." + getMothVariant(stack.getItem()).getVariation()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));

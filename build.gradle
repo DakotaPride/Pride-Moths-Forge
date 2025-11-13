@@ -88,7 +88,7 @@ dependencies {
     // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
-    implementation "net.neoforged:neoforge:21.8.15"
+    implementation "net.neoforged:neoforge:21.10.51-beta"
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -113,7 +113,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     // Geckolib
-    implementation "software.bernie.geckolib:geckolib-neoforge-${geckolib_version}"
+    //implementation "software.bernie.geckolib:geckolib-neoforge-${geckolib_version}"
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.

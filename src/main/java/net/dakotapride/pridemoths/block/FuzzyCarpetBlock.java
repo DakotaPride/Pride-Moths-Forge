@@ -37,7 +37,12 @@ public class FuzzyCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public void entityInside(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
+    protected void entityInside(BlockState state,
+                                Level level,
+                                BlockPos blockPos,
+                                Entity entity,
+                                InsideBlockEffectApplier insideBlockEffectApplier,
+                                boolean b) {
         boolean isHostile = entity instanceof Monster;
         if (isHostile) {
             ((Monster) entity).addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600, 9));
