@@ -5,8 +5,8 @@ import net.dakotapride.pridemoths.client.entity.pride.MothVariation;
 import net.dakotapride.pridemoths.item.FruitfulStewFoodItem;
 import net.dakotapride.pridemoths.item.GlassJarItem;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
@@ -60,7 +60,7 @@ public class ItemsRegistrar {
     public static DeferredItem<Item> ALLY_MOTH_JAR = registerMothContainedWithinJarItem(MothVariation.ALLY);
 
     public static <T extends Item> DeferredItem<T> register(String name, Function<Item.Properties, T> item, Supplier<Item.Properties> properties) {
-        return ITEMS.register(name, () -> item.apply(properties.get().setId(ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, name)))));
+        return ITEMS.register(name, () -> item.apply(properties.get().setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(PrideMothsMod.ID, name)))));
     }
 
     private static DeferredItem<Item> registerMothContainedWithinJarItem(MothVariation variation) {

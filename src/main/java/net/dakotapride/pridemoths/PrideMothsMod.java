@@ -8,8 +8,8 @@ import net.dakotapride.pridemoths.config.PrideMothsCommonConfig;
 import net.dakotapride.pridemoths.register.*;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -35,15 +35,15 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 public class PrideMothsMod {
     public static final String ID = "pridemoths";
 
-    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "light_sources"));
-    public static TagKey<Block> MOTH_ENCLOSURES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "moth_enclosures"));
-    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "can_moth_eat"));
-    public static TagKey<Item> MOTH_JARS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "moth_jars"));
+    public static TagKey<Block> LIGHT_SOURCES_TAG = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(PrideMothsMod.ID, "light_sources"));
+    public static TagKey<Block> MOTH_ENCLOSURES = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(PrideMothsMod.ID, "moth_enclosures"));
+    public static TagKey<Item> CAN_MOTH_EAT = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(PrideMothsMod.ID, "can_moth_eat"));
+    public static TagKey<Item> MOTH_JARS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(PrideMothsMod.ID, "moth_jars"));
 
     public static final IntegerProperty FUZZ_LEVEL = IntegerProperty.create("fuzz_level", 0, 3);
 
     public static ResourceKey<Item> keyOfItem(String name) {
-        return ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(ID, name));
+        return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ID, name));
     }
 
     public PrideMothsMod(IEventBus bus, ModContainer modContainer) {
