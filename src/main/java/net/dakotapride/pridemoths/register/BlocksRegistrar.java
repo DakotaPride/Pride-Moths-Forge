@@ -4,8 +4,8 @@ import net.dakotapride.pridemoths.PrideMothsMod;
 import net.dakotapride.pridemoths.block.FuzzyCarpetBlock;
 import net.dakotapride.pridemoths.block.MothEnclosureBlock;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -35,7 +35,7 @@ public class BlocksRegistrar {
                                                                            Function<BlockBehaviour.Properties, T> block,
                                                                            Supplier<BlockBehaviour.Properties> properties) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, () -> block.apply(properties.get().setId(ResourceKey.create(Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, name)))));
+                Identifier.fromNamespaceAndPath(PrideMothsMod.ID, name)))));
         ItemsRegistrar.register(
                 name,
                 itemProps -> new BlockItem(toReturn.get(), itemProps),
@@ -46,7 +46,7 @@ public class BlocksRegistrar {
     public static <T extends Block> DeferredBlock<T> fuzzyCarpet(Function<BlockBehaviour.Properties, T> block,
                                                                            Supplier<BlockBehaviour.Properties> properties) {
         DeferredBlock<T> toReturn = BLOCKS.register("fuzzy_carpet", () -> block.apply(properties.get().setId(ResourceKey.create(Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "fuzzy_carpet")))));
+                Identifier.fromNamespaceAndPath(PrideMothsMod.ID, "fuzzy_carpet")))));
         ItemsRegistrar.register(
                 "fuzzy_carpet",
                 itemProps -> new FuzzyCarpetBlock.FuzzyCarpetBlockItem(toReturn.get(), itemProps),
@@ -57,7 +57,7 @@ public class BlocksRegistrar {
     public static <T extends Block> DeferredBlock<T> mothEnclosure(Function<BlockBehaviour.Properties, T> block,
                                                                            Supplier<BlockBehaviour.Properties> properties) {
         DeferredBlock<T> toReturn = BLOCKS.register("moth_enclosure", () -> block.apply(properties.get().setId(ResourceKey.create(Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(PrideMothsMod.ID, "moth_enclosure")))));
+                Identifier.fromNamespaceAndPath(PrideMothsMod.ID, "moth_enclosure")))));
         ItemsRegistrar.register(
                 "moth_enclosure",
                 itemProps -> new MothEnclosureBlock.MothEnclosureBlockItem(toReturn.get(), itemProps),

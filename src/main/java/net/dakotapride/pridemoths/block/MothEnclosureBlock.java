@@ -28,7 +28,6 @@ import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
@@ -40,6 +39,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -324,7 +324,7 @@ public class MothEnclosureBlock extends BaseEntityBlock implements EntityBlock {
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide() && world instanceof ServerLevel serverLevel
                 //&& player.isCreative()
-                && serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)
+                && serverLevel.getGameRules().get(GameRules.BLOCK_DROPS)
                 && world.getBlockEntity(pos) instanceof MothEnclosureBlockEntity mothEnclosureBlockEntity) {
             ItemStack itemStack = new ItemStack(this);
             //int i = state.get(FUZZ_LEVEL);
